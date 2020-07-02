@@ -25,8 +25,7 @@
     "vue-i18n": "^8.18.2",
     "vue-router": "^3.3.4",
     "vue-router-prefetch": "^1.6.0",
-    "vue2-transitions": "^0.3.0",
-    "vuetify": "^2.3.2"
+    "vue2-transitions": "^0.3.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.6",

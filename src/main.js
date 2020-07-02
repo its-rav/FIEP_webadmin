@@ -15,7 +15,6 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import RouterPrefetch from "vue-router-prefetch";
 import App from "./App";
-import vuetify from './plugins/vuetify'
 import firebase from "firebase/app";
 import config from "./config";
 const firebaseConfig = config.firebaseConfig;
@@ -45,6 +44,5 @@ firebase.initializeApp(firebaseConfig);
 new Vue({
   router,
   i18n,
-  vuetify,
   render: h => h(App)
 }).$mount("#app");
