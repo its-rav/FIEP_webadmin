@@ -15,11 +15,10 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import RouterPrefetch from "vue-router-prefetch";
 import App from "./App";
-
+import vuetify from './plugins/vuetify'
 import firebase from "firebase/app";
 import config from "./config";
 const firebaseConfig = config.firebaseConfig;
-
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFontAwesome } from "@fortawesome/free-brands-svg-icons";
@@ -33,16 +32,19 @@ import router from "./router/index";
 import BlackDashboard from "./plugins/blackDashboard";
 import i18n from "./i18n";
 import "./registerServiceWorker";
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
 Vue.use(RouterPrefetch);
-
+Vue.use(ElementUI);
 firebase.initializeApp(firebaseConfig);
 
 /* eslint-disable no-new */
 new Vue({
   router,
   i18n,
+  vuetify,
   render: h => h(App)
 }).$mount("#app");
