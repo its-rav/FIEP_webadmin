@@ -34,6 +34,10 @@ import "./registerServiceWorker";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+import Repository from "./services/repositories/RepositoryFactory";
+
+Vue.prototype.$repository=Repository;
+
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
 Vue.use(RouterPrefetch);
