@@ -12,7 +12,10 @@ const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue")
 const Maps = () => import(/* webpackChunkName: "common" */ "@/pages/Maps.vue");
 const Typography = () => import(/* webpackChunkName: "common" */ "@/pages/Typography.vue");
 const TableList = () => import(/* webpackChunkName: "common" */ "@/pages/TableList.vue");
-
+const UserManagement = () => import(/* webpackChunkName: "common" */ "@/pages/UserManagement.vue");
+const EventManagement = () => import(/* webpackChunkName: "common" */ "@/pages/EventManagement.vue");
+const PostManagement = () => import(/* webpackChunkName: "common" */ "@/pages/PostManagement.vue");
+const GroupManagement = () => import(/* webpackChunkName: "common" */ "@/pages/GroupManagement.vue");
 const routes = [
   {
     path: "/",
@@ -65,6 +68,26 @@ const routes = [
         path: "/table-list",
         name: "table-list",
         component: TableList
+      },
+      {
+        path: "/usermanagement",
+        name: "usermanagement",
+        component: UserManagement
+      },
+      {
+        path: "/eventmanagement",
+        name: "eventmanagement",
+        component: EventManagement
+      },
+      {
+        path: "/postmanagement",
+        name: "postmanagement",
+        component: PostManagement
+      },
+      {
+        path: "/groupmanagement",
+        name: "groupmanagement",
+        component: GroupManagement
       }
     ]
   },
