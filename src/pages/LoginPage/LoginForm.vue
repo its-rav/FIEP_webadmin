@@ -36,7 +36,6 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import * as firebase from "firebase/app"
 import "firebase/auth";
 import Request from "../../services/RequestBase";
-
 export default {
   props: {
     model: {
@@ -82,9 +81,9 @@ export default {
       const provider=new firebase.auth.GoogleAuthProvider();
 
       firebase.auth().signInWithPopup(provider).then(result=>{
-
+          console.log(result)
         this.$notify({
-          message:"Success"
+          message:"Success",
         });
 
       }).catch(err=>{

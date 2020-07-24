@@ -13,17 +13,6 @@
         <el-form-item label="Event Name" :label-width="formLabelWidth">
           <el-input v-model="addEvent.eventName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="Group" :label-width="formLabelWidth">
-          <el-select
-            v-model="addEvent.groupName"
-            placeholder="Please select a Group"
-            style="float: left"
-          >
-            <el-option label="F-Code" value="FCode"></el-option>
-            <el-option label="FPT Chess Club" value="FCC"></el-option>
-            <el-option label="FPT Event Club" value="FEV"></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="Location" :label-width="formLabelWidth">
           <el-input v-model="addEvent.location" autocomplete="off"></el-input>
         </el-form-item>
@@ -51,11 +40,10 @@
     >
       <el-table-column label="Event Name" width="180px" prop="eventName">
       </el-table-column>
-      <el-table-column label="Group" prop="groupName"></el-table-column>
       <el-table-column label="Location" width="180px" prop="location">
         <!-- <span>{{ tableData.location}}</span> -->
         </el-table-column>
-      <el-table-column label="Approval State" prop="state"></el-table-column>
+        <el-table-column label="Approval State" prop="state"></el-table-column>
       <el-table-column label="Time Occur" prop="timeOccur"></el-table-column>
       <el-table-column label="Create Date" prop="createDate"></el-table-column>
       <el-table-column label="Modify Date" prop="modifyDate"></el-table-column>
@@ -70,33 +58,11 @@
               <el-form-item label="Event Name" :label-width="formLabelWidth">
                 <el-input v-model="form.eventName" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="Group" :label-width="formLabelWidth">
-                <el-select
-                  v-model="form.groupName"
-                  placeholder="Please select a Group"
-                  style="float: left"
-                >
-                  <el-option label="F-Code" value="FCode"></el-option>
-                  <el-option label="FPT Chess Club" value="FCC"></el-option>
-                  <el-option label="FPT Event Club" value="FEV"></el-option>
-                </el-select>
-              </el-form-item>
               <el-form-item label="Location" :label-width="formLabelWidth">
                 <el-input v-model="form.location" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Time Occur" :label-width="formLabelWidth">
                 <el-input v-model="form.timeOccur" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="Approval State" :label-width="formLabelWidth">
-                <el-select
-                  v-model="form.state"
-                  placeholder="Please select a State"
-                  style="float: left"
-                >
-                  <el-option label="Approve" value="Approve"></el-option>
-                  <el-option label="Pending" value="Pending"></el-option>
-                  <el-option label="Reject" value="Reject"></el-option>
-                </el-select>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -118,70 +84,62 @@
 
 <script>
 import axios from 'axios';
-import Request from "../services/RequestBase.js";
 export default {
   data() {
     return {
-      // tableData: [
-      //   {
-      //     eventName: "ACM",
-      //     groupName: "F-Code",
-      //     location: "Hall Of FPT University",
-      //     timeOccur: "2020-06-29",
-      //     modifyDate: "2020-06-29",
-      //     createDate: "2020-06-29",
-      //     state: "Approve",
-      //   },
-      //   {
-      //     eventName: "ACM",
-      //     groupName: "F-Code",
-      //     location: "Hall Of FPT University",
-      //     timeOccur: "2020-06-29",
-      //     modifyDate: "2020-06-29",
-      //     createDate: "2020-06-29",
-      //     state: "Approve",
-      //   },
-      //   {
-      //     eventName: "ACM",
-      //     groupName: "F-Code",
-      //     location: "Hall Of FPT University",
-      //     timeOccur: "2020-06-29",
-      //     modifyDate: "2020-06-29",
-      //     createDate: "2020-06-29",
-      //     state: "Approve",
-      //   },
-      //   {
-      //     eventName: "ACM",
-      //     groupName: "F-Code",
-      //     location: "Hall Of FPT University",
-      //     timeOccur: "2020-06-29",
-      //     modifyDate: "2020-06-29",
-      //     createDate: "2020-06-29",
-      //     state: "Approve",
-      //   },
-      //   {
-      //     eventName: "ACM",
-      //     groupName: "F-Code",
-      //     location: "Hall Of FPT University",
-      //     timeOccur: "2020-06-29",
-      //     modifyDate: "2020-06-29",
-      //     createDate: "2020-06-29",
-      //     state: "Approve",
-      //   }
-      // ],
-      tableData: [],
+      tableData: [
+        {
+          eventName: "ACM",
+          location: "Hall Of FPT University",
+          timeOccur: "2020-06-29",
+          modifyDate: "2020-06-29",
+          createDate: "2020-06-29",
+          state: "Approve",
+        },
+        {
+          eventName: "ACM",
+          location: "Hall Of FPT University",
+          timeOccur: "2020-06-29",
+          modifyDate: "2020-06-29",
+          createDate: "2020-06-29",
+          state: "Approve",
+        },
+        {
+          eventName: "ACM",
+          location: "Hall Of FPT University",
+          timeOccur: "2020-06-29",
+          modifyDate: "2020-06-29",
+          createDate: "2020-06-29",
+          state: "Approve",
+        },
+        {
+          eventName: "ACM",
+          location: "Hall Of FPT University",
+          timeOccur: "2020-06-29",
+          modifyDate: "2020-06-29",
+          createDate: "2020-06-29",
+          state: "Approve",
+        },
+        {
+          eventName: "ACM",
+          location: "Hall Of FPT University",
+          timeOccur: "2020-06-29",
+          modifyDate: "2020-06-29",
+          createDate: "2020-06-29",
+          state: "Approve",
+        }
+      ],
+      // tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
       form: {
         eventName: "",
-        groupName: "",
         location: "",
         timeOccur: "",
         state: ""
       },
       addEvent: {
         eventName: "",
-        groupName: "",
         location: "",
         timeOccur: ""
       },
@@ -192,37 +150,28 @@ export default {
     };
   },
   created() {
-  //   const req=Request({
-  //       headers:{
-  //         Authentication: "asdasdadshkhhasd"
-  //       },
-  //     });
+//     const req=Request({
+//         headers:{
+//           Authentication: "asdasdadshkhhasd"
+//         },
+//       });
 
-  //     let EventRepository=this.$repository.get("events");
-  //     let UserRepository=this.$repository.get("users");
-  //     let AuthRepository=this.$repository.get("auth");
-  //     let CommentRepository=this.$repository.get("comments");
-  //     let GroupRepository=this.$repository.get("groups");
-  //     let NotificationRepository=this.$repository.get("notifications");
-  //     let PostRepository=this.$repository.get("posts");
-  // new EventRepository(req).get().then(rs=>tableData = rs).catch(e=>console.error(e));
+//       let EventRepository=this.$repository.get("events");
+//       let UserRepository=this.$repository.get("users");
+//       let AuthRepository=this.$repository.get("auth");
+//       let CommentRepository=this.$repository.get("comments");
+//       let GroupRepository=this.$repository.get("groups");
+//       let NotificationRepository=this.$repository.get("notifications");
+//       let PostRepository=this.$repository.get("posts");
+//   new EventRepository(req).get({pageNumber:1,approveState: 2}).then(rs=>tableData = rs).catch(e=>console.error(e));
   },
   mounted: {
   },
   methods: {
-  //   fetchEvent(){
-  // this.$http.get('http://slimapp.dev/api/customers')
-  //   .then(function(response){
-
-  //     this.tableData = (response.body);
-  //     console.log("Tbale"+tableData);
-  //   });
-  // },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.eventName = row.eventName;
-      this.form.groupName = row.groupName;
       this.form.location = row.location;
       this.form.timeOccur = row.timeOccur;
       this.form.state = row.state;
@@ -236,7 +185,6 @@ export default {
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
       this.tableData[this.editedIndex].eventName = this.form.eventName;
-      this.tableData[this.editedIndex].groupName = this.form.groupName;
       this.tableData[this.editedIndex].location = this.form.location;
       this.tableData[this.editedIndex].timeOccur = this.form.timeOccur;
       this.tableData[this.editedIndex].state = this.form.state;
@@ -251,15 +199,14 @@ export default {
         .replace(/-/g, "-");
       let EventDetail = {
         eventName: this.addEvent.eventName,
-        groupName: this.addEvent.groupName,
         location: this.addEvent.location,
         timeOccur: this.addEvent.timeOccur,
-        createDate: currentDateWithFormat
+        createDate: currentDateWithFormat,
+        state: "Pending",
       };
       this.tableData.push(EventDetail);
       this.addEvent.eventName = "";
       this.addEvent.timeOccur = "";
-      this.addEvent.groupName = "",
       this.addEvent.location = "",
       this.addEvent.image = "";
     },

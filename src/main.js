@@ -11,6 +11,8 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
  */
+import VueAxios from 'vue-axios';
+import axios from 'axios';
 import Vue from "vue";
 import VueRouter from "vue-router";
 import RouterPrefetch from "vue-router-prefetch";
@@ -33,6 +35,7 @@ import i18n from "./i18n";
 import "./registerServiceWorker";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(VueAxios,axios);
 
 import Repository from "./services/repositories/RepositoryFactory";
 
