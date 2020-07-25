@@ -2,7 +2,7 @@ import axios from 'axios'
 import authHeader from './auth-header'
 // https://webapi20200601090708.azurewebsites.net/api/v1/Auth/Auth
 // const API_URL = 'https://webapi20200601090708.azurewebsites.net'
-const API_URL = 'https://localhost:44312'
+const API_URL = 'https://192.168.1.24:8083/api/'
 class FIEPCore {
   get (url, obj) {
     return axios

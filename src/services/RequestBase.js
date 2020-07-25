@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const baseDomain = "http://192.168.1.200:8082";
-const baseDomain = "http://192.168.1.24:8083";
+const baseDomain = "https://192.168.1.24:8083";
 const baseURL = `${baseDomain}/api`; // Incase of /api/v1;
 
 const predefinedConfig = {

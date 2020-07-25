@@ -180,7 +180,6 @@ export default {
           Authentication: "asdasdadshkhhasd"
         },
       });
-
       let EventRepository=this.$repository.get("events");
       let UserRepository=this.$repository.get("users");
       let AuthRepository=this.$repository.get("auth");
