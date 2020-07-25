@@ -169,7 +169,7 @@ export default {
       let GroupDetail = {
         groupID: this.tableData.length +1,
         groupName: groupName1,
-        groupFollower: 0
+        groupFollower: 1
       }
       this.tableData.push(GroupDetail)
     },

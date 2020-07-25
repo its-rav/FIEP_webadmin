@@ -14,7 +14,14 @@
           <el-input v-model="addUser.fullName" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="Email" :label-width="formLabelWidth">
-          <el-input v-model="addUser.userId" autocomplete="off"></el-input>
+          <el-input v-model="addUser.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Role" :label-width="formLabelWidth">
+          <el-select v-model="addUser.role" placeholder="Please select a role" style="float: left">
+            <el-option label="Admin" value="1"></el-option>
+            <el-option label="User" value="2"></el-option>
+            <el-option label="Group Manager" value="3"></el-option>
+          </el-select>
         </el-form-item>
         <!-- <el-form-item label="Avatar" :label-width="formLabelWidth">
           <div v-if="!image">
@@ -35,11 +42,21 @@
       :data="tableData.filter(data => !search || data.fullName.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-      <el-table-column label="Email" prop="userId"></el-table-column>
-      <el-table-column label="Fullname" prop="fullName"></el-table-column>
-      <el-table-column label="Role" prop="role"></el-table-column>
-      <el-table-column label="Create Date" prop="createDate"></el-table-column>
-      <el-table-column label="Modify Date" prop="modifyDate"></el-table-column>
+      <el-table-column label="UserId" :min-width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.userId}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Fullname">
+        <template slot-scope="scope">
+          <span>{{ scope.row.fullName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Email">
+        <template slot-scope="scope">
+          <span>{{ scope.row.mail}}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="Type to search" />
@@ -51,8 +68,8 @@
               <el-form-item label="Fullname" :label-width="formLabelWidth">
                 <el-input v-model="form.fullName" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="UserId" :label-width="formLabelWidth">
-                <el-input v-model="form.userId" autocomplete="off"></el-input>
+              <el-form-item label="Email" :label-width="formLabelWidth">
+                <el-input v-model="form.email" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Role" :label-width="formLabelWidth">
                 <el-select
@@ -60,9 +77,9 @@
                   placeholder="Please select a role"
                   style="float: left"
                 >
-                  <el-option label="Student" value="Student"></el-option>
-                  <el-option label="President" value="President"></el-option>
-                  <el-option label="Admin" value="Admin"></el-option>
+                  <el-option label="Admin" value="1"></el-option>
+                  <el-option label="User" value="2"></el-option>
+                  <el-option label="Group Manager" value="3"></el-option>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -84,81 +101,18 @@
 </template>
 
 <script>
-import Request from "../services/RequestBase";
+import axios from "axios";
+import Request from "../services/RequestBase.js";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          userId: "Tom",
-          fullName: "Tom Cruise",
-          role: "Student",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        },
-        {
-          fullName: "John Jerry",
-          userId: "John",
-          role: "Student",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        },
-        {
-          fullName: "Morgan Cruise",
-          userId: "Morgan",
-          role: "President",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        },
-        {
-          fullName: "Jessy Cruise",
-          userId: "Jessy",
-          role: "Student",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        },
-        {
-          userId: "Tom",
-          fullName: "Tom Cruise",
-          role: "Student",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        },
-        {
-          userId: "Tom",
-          fullName: "Tom Cruise",
-          role: "Student",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        },
-        {
-          userId: "Tom",
-          fullName: "Tom Cruise",
-          role: "Student",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29"
-        }
-      ],
+      tableData: [],
       addUser: {
         userId: "",
         fullName: "",
-        image: ""
+        email: "",
+        role: ""
       },
-      // rulesForm: {
-      //   fullName: [
-      //     {
-      //       required: true,
-      //       message: "Please input Fullname",
-      //       trigger: "blur"
-      //     },
-      //     {
-      //       min: 3,
-      //       max: 5,
-      //       message: "Fullname should be 5 to 35 character",
-      //       trigger: "blur"
-      //     }
-      //   ]
-      // },
       dialogFormVisible: false,
       dialogFormAddVisible: false,
       form: {
@@ -169,36 +123,35 @@ export default {
       formLabelWidth: "120px",
       search: "",
       editedIndex: -1,
-      currentPage2: 5
+      userIdDelete: ""
     };
   },
+  created: function() {
+    const req = Request({
+      headers: {
+        Authentication: "asdasdadshkhhasd"
+      }
+    });
+
+    let EventRepository = this.$repository.get("events");
+    let UserRepository = this.$repository.get("users");
+    let AuthRepository = this.$repository.get("auth");
+    let CommentRepository = this.$repository.get("comments");
+    let GroupRepository = this.$repository.get("groups");
+    let NotificationRepository = this.$repository.get("notifications");
+    let PostRepository = this.$repository.get("posts");
+    let pageSize = 10;
+    new UserRepository(req)
+      .get()
+      .then(rs => (this.tableData = rs.data.data))
+      .catch(e => console.error(e));
+  },
   methods: {
-    test(){
-
-      const req=Request({
-        headers:{
-          Authentication: "asdasdadshkhhasd"
-        },
-      });
-      let EventRepository=this.$repository.get("events");
-      let UserRepository=this.$repository.get("users");
-      let AuthRepository=this.$repository.get("auth");
-      let CommentRepository=this.$repository.get("comments");
-      let GroupRepository=this.$repository.get("groups");
-      let NotificationRepository=this.$repository.get("notifications");
-      let PostRepository=this.$repository.get("posts");
- new EventRepository(req).get({pageNumber:1,approveState: 2}).then(rs=>console.log(rs)).catch(e=>console.error(e));
- new UserRepository(req).get().then(rs=>console.log(rs)).catch(e=>console.error(e));
-      new UserRepository(req).create({ groupId:1, eventName:"asd", timeOccur:"asd", eventImageUrl:"asd", location:"asd" }).then(rs=>console.log(rs)).catch(e=>console.error(e));
-
-    },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.fullName = row.fullName;
-      this.form.role = row.role;
-      this.form.userId = row.userId;
-      console.log(this.editedIndex);
+      this.form.email = row.mail;
     },
     confirm(index, row) {
       var currentDate = new Date();
@@ -207,28 +160,50 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
+      let userId = this.tableData[this.editedIndex].userId;
+      axios
+        .patch(`https://192.168.1.24:8083/api/users/` + userId, {
+          roleId: this.form.role,
+          email: this.form.email,
+          fullName: this.form.fullName
+        })
+        .then(response => {});
+      this.tableData[this.editedIndex].mail = this.form.email;
       this.tableData[this.editedIndex].fullName = this.form.fullName;
-      this.tableData[this.editedIndex].role = this.form.role;
-      this.tableData[this.editedIndex].userId = this.form.userId;
-      this.tableData[this.editedIndex].modifyDate = currentDateWithFormat;
+    },
+    makeid(length) {
+      var text = "";
+      var possible =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (var i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
     },
     confirmAdd(formName) {
       // this.$refs[formName].validate(valid => {
-        this.dialogFormAddVisible = false;
+      this.dialogFormAddVisible = false;
       var currentDate = new Date();
       var currentDateWithFormat = new Date()
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, "-");
+      axios
+        .post(`https://192.168.1.24:8083/api/users`, {
+          fullName: this.addUser.fullName,
+          email: this.addUser.email,
+          roleId: this.addUser.role
+        })
+        .then(response => {});
       let userDetail = {
         fullName: this.addUser.fullName,
-        userId: this.addUser.userId,
-        createDate: currentDateWithFormat
+        mail: this.addUser.email,
+        userId: this.makeid(32)
       };
       this.tableData.push(userDetail);
       this.addUser.fullName = "";
-      this.addUser.userId = "";
-      this.addUser.image = "";
+      this.addUser.email = "";
       // });
     },
     onFileChange(e) {
@@ -250,28 +225,11 @@ export default {
       this.addUser.image = "";
     },
     handleDelete(index, row) {
-      this.$confirm(
-        "This will permanently delete the file. Continue?",
-        "Warning",
-        {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          this.tableData.splice(index, 1);
-          this.$message({
-            type: "success",
-            message: "Delete completed"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled"
-          });
-        });
+      this.userIdDelete = row.userId;
+      axios
+        .delete(`https://192.168.1.24:8083/api/users/` + this.userIdDelete)
+        .then(response => {});
+      this.tableData.splice(index, 1);
     }
   }
 };
