@@ -37,7 +37,6 @@
     >
       <el-table-column label="Email" prop="userId"></el-table-column>
       <el-table-column label="Fullname" prop="fullName"></el-table-column>
-      <el-table-column label="Role" prop="role"></el-table-column>
       <el-table-column label="Create Date" prop="createDate"></el-table-column>
       <el-table-column label="Modify Date" prop="modifyDate"></el-table-column>
       <el-table-column align="right">
@@ -51,20 +50,20 @@
               <el-form-item label="Fullname" :label-width="formLabelWidth">
                 <el-input v-model="form.fullName" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="UserId" :label-width="formLabelWidth">
+              <el-form-item label="Email" :label-width="formLabelWidth">
                 <el-input v-model="form.userId" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="Role" :label-width="formLabelWidth">
+              <!-- <el-form-item label="Role" :label-width="formLabelWidth">
                 <el-select
                   v-model="form.role"
                   placeholder="Please select a role"
                   style="float: left"
                 >
-                  <el-option label="Student" value="Student"></el-option>
-                  <el-option label="President" value="President"></el-option>
+                  <el-option label="User" value="Student"></el-option>
+                  <el-option label="Group Manager" value="President"></el-option>
                   <el-option label="Admin" value="Admin"></el-option>
                 </el-select>
-              </el-form-item>
+              </el-form-item> -->
             </el-form>
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible = false">Cancel</el-button>
@@ -84,7 +83,6 @@
 </template>
 
 <script>
-import Request from "../services/RequestBase";
 export default {
   data() {
     return {
@@ -180,6 +178,7 @@ export default {
           Authentication: "asdasdadshkhhasd"
         },
       });
+
       let EventRepository=this.$repository.get("events");
       let UserRepository=this.$repository.get("users");
       let AuthRepository=this.$repository.get("auth");

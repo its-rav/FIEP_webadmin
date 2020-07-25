@@ -19,9 +19,12 @@
             placeholder="Please select a Group"
             style="float: left"
           >
-            <el-option label="F-Code" value="FCode"></el-option>
-            <el-option label="FPT Chess Club" value="FCC"></el-option>
-            <el-option label="FPT Event Club" value="FEV"></el-option>
+            <el-option label="F-Code" value="1"></el-option>
+            <el-option label="FPT Event Club" value="2"></el-option>
+            <el-option label="FPT Instrument Club" value="3"></el-option>
+            <el-option label="FPT Chess Club" value="4"></el-option>
+            <el-option label="FPT Guitar Club" value="5"></el-option>
+            <el-option label="FPT Vovinam Club" value="6"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Location" :label-width="formLabelWidth">
@@ -37,7 +40,12 @@
           </div>
         </el-form-item>-->
         <el-form-item label="Time Occur" :label-width="formLabelWidth">
-          <el-input v-model="addEvent.timeOccur" autocomplete="off"></el-input>
+          <el-date-picker
+            v-model="addEvent.timeOccur"
+            type="datetime"
+            placeholder="Select date and time"
+          ></el-date-picker>
+          <!-- <el-input v-model="addEvent.timeOccur" autocomplete="off"></el-input> -->
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -45,17 +53,51 @@
         <el-button type="primary" @click="confirmAdd()">Confirm</el-button>
       </span>
     </el-dialog>
+
     <el-table
       :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-      <el-table-column label="Event Name" prop="eventName" width="180px"></el-table-column>
-      <el-table-column label="Group" prop="groupName"></el-table-column>
-      <el-table-column label="Location" prop="location" width="180px"></el-table-column>
-      <el-table-column label="Approval State" prop="state"></el-table-column>
-      <el-table-column label="Time Occur" prop="timeOccur"></el-table-column>
-      <el-table-column label="Create Date" prop="createDate"></el-table-column>
-      <el-table-column label="Modify Date" prop="modifyDate"></el-table-column>
+      <el-table-column label="EventID" :min-width="40">
+        <template slot-scope="scope">
+          <span>{{ scope.row.eventID }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Event Name" :min-width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.eventName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Group Name" :min-width="70">
+        <template slot-scope="scope">
+          <span>{{ scope.row.groupID}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Location" width="180px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.location }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Approval State">
+        <template slot-scope="scope">
+          <span>{{ scope.row.approveState === 1 ? "Aprrove" : "Pending" }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Time Occur" prop="timeOccur">
+        <template slot-scope="scope">
+          <span>{{ scope.row.timeOccur}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Create Date" prop="createDate">
+        <template slot-scope="scope">
+          <span>{{ scope.row.createDate}}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="Modify Date">
+        <template slot-scope="scope">
+        <span>{{ scope.row.modifyDate }}</span>
+      </template>
+      </el-table-column>-->
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="Type to search" />
@@ -73,16 +115,23 @@
                   placeholder="Please select a Group"
                   style="float: left"
                 >
-                  <el-option label="F-Code" value="FCode"></el-option>
-                  <el-option label="FPT Chess Club" value="FCC"></el-option>
-                  <el-option label="FPT Event Club" value="FEV"></el-option>
+                  <el-option label="F-Code" value="1" v-for="item in items" :key="item.id"></el-option>
+                  <el-option label="FPT Event Club" value="2"></el-option>
+                  <el-option label="FPT Instrument Club" value="3"></el-option>
+                  <el-option label="FPT Chess Club" value="4"></el-option>
+                  <el-option label="FPT Guitar Club" value="5"></el-option>
+                  <el-option label="FPT Vovinam Club" value="6"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="Location" :label-width="formLabelWidth">
                 <el-input v-model="form.location" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Time Occur" :label-width="formLabelWidth">
-                <el-input v-model="form.timeOccur" autocomplete="off"></el-input>
+                <el-date-picker
+                  v-model="form.timeOccur"
+                  type="datetime"
+                  placeholder="Select date and time"
+                ></el-date-picker>
               </el-form-item>
               <el-form-item label="Approval State" :label-width="formLabelWidth">
                 <el-select
@@ -90,9 +139,8 @@
                   placeholder="Please select a State"
                   style="float: left"
                 >
-                  <el-option label="Approve" value="Approve"></el-option>
-                  <el-option label="Pending" value="Pending"></el-option>
-                  <el-option label="Reject" value="Reject"></el-option>
+                  <el-option label="Approve" value="1"></el-option>
+                  <el-option label="Pending" value="0"></el-option>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -114,56 +162,12 @@
 </template>
 
 <script>
+import axios from "axios";
+import Request from "../services/RequestBase.js";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          eventName: "ACM",
-          groupName: "F-Code",
-          location: "Hall Of FPT University",
-          timeOccur: "2020-06-29",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-          state: "Approve",
-        },
-        {
-          eventName: "ACM",
-          groupName: "F-Code",
-          location: "Hall Of FPT University",
-          timeOccur: "2020-06-29",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-          state: "Approve",
-        },
-        {
-          eventName: "ACM",
-          groupName: "F-Code",
-          location: "Hall Of FPT University",
-          timeOccur: "2020-06-29",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-          state: "Approve",
-        },
-        {
-          eventName: "ACM",
-          groupName: "F-Code",
-          location: "Hall Of FPT University",
-          timeOccur: "2020-06-29",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-          state: "Approve",
-        },
-        {
-          eventName: "ACM",
-          groupName: "F-Code",
-          location: "Hall Of FPT University",
-          timeOccur: "2020-06-29",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-          state: "Approve",
-        }
-      ],
+      tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
       form: {
@@ -183,17 +187,60 @@ export default {
       formLabelWidth1: "180px",
       search: "",
       editedIndex: -1,
+      eventIdDelete: ""
     };
   },
+  created: function() {
+    const req = Request({
+      headers: {
+        Authentication: "asdasdadshkhhasd"
+      }
+    });
+
+    let EventRepository = this.$repository.get("events");
+    let UserRepository = this.$repository.get("users");
+    let AuthRepository = this.$repository.get("auth");
+    let CommentRepository = this.$repository.get("comments");
+    let GroupRepository = this.$repository.get("groups");
+    let NotificationRepository = this.$repository.get("notifications");
+    let PostRepository = this.$repository.get("posts");
+    let pageSize = 15
+    new EventRepository(req)
+      .get({pageSize})
+      .then(rs => (this.tableData = rs.data.data))
+      .catch(e => console.error(e));
+  },
+  mounted: {},
   methods: {
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.eventName = row.eventName;
-      this.form.groupName = row.groupName;
+      let groupNm = ""
+      if(row.groupID === 1){
+        this.groupNm = "F-Code"
+      }
+      else if(row.groupID === 2){
+        this.groupNm = "FPT Event Club"
+      }else if(row.groupID === 3){
+        this.groupNm = "FPT Instrument Club"
+      }else if(row.groupID === 4){
+        this.groupNm = "FPT Chess Club"
+      }else if(row.groupID === 5){
+        this.groupNm = "FPT Guitar Club"
+      }else if(row.groupID === 6){
+        this.groupNm = "FPT Vovinam Club"
+      }
+      this.form.groupName = this.groupNm;
       this.form.location = row.location;
       this.form.timeOccur = row.timeOccur;
-      this.form.state = row.state;
+      let approve = "";
+      if (row.approveState === 1) {
+        this.approve = "Approve";
+      } else {
+        this.approve = "Pending";
+      }
+      this.form.state = this.approve;
       console.log(this.editedIndex);
     },
     confirm(index, row) {
@@ -203,12 +250,41 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
+      let eventEdit = this.tableData[this.editedIndex].eventID;
+      let stateEdit = ""
+      let groupNameEdit = ""
+      if(this.form.state === "1"){
+        this.stateEdit = 1
+      }else if(this.form.state === "0"){
+        this.stateEdit = 0
+      }
+      if(this.form.groupName == "1"){
+        this.groupNameEdit = 1
+      }else if(this.form.groupName == "2"){
+        this.groupNameEdit = 2
+      }else if(this.form.groupName == "3"){
+        this.groupNameEdit = 3
+      }else if(this.form.groupName == "4"){
+        this.groupNameEdit = 4
+      }else if(this.form.groupName == "5"){
+        this.groupNameEdit = 5
+      }else if(this.form.groupName == "6"){
+        this.groupNameEdit = 6
+      }
+      axios
+        .patch(`https://192.168.1.24:8083/api/events/` + eventEdit, {
+          eventName: this.form.eventName,
+          timeOccur: this.form.timeOccur,
+          groupId: this.groupNameEdit,
+          approvalState: this.stateEdit,
+          location: this.form.location
+        })
+        .then(response => {});
       this.tableData[this.editedIndex].eventName = this.form.eventName;
-      this.tableData[this.editedIndex].groupName = this.form.groupName;
+      this.tableData[this.editedIndex].groupID = this.groupNameEdit;
       this.tableData[this.editedIndex].location = this.form.location;
       this.tableData[this.editedIndex].timeOccur = this.form.timeOccur;
-      this.tableData[this.editedIndex].state = this.form.state;
-      this.tableData[this.editedIndex].modifyDate = currentDateWithFormat;
+      this.tableData[this.editedIndex].approveState = this.stateEdit;
     },
     confirmAdd() {
       this.dialogFormAddVisible = false;
@@ -217,18 +293,62 @@ export default {
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, "-");
-      let EventDetail = {
-        eventName: this.addEvent.eventName,
-        groupName: this.addEvent.groupName,
-        location: this.addEvent.location,
-        timeOccur: this.addEvent.timeOccur,
-        createDate: currentDateWithFormat
-      };
-      this.tableData.push(EventDetail);
+      this.dialogFormVisible = false;
+      let groupNameAdd = ""
+      if(this.addEvent.groupName == "1"){
+        this.groupNameAdd = 1
+      }else if(this.addEvent.groupName == "2"){
+        this.groupNameAdd = 2
+      }else if(this.addEvent.groupName == "3"){
+        this.groupNameAdd = 3
+      }else if(this.addEvent.groupName == "4"){
+        this.groupNameAdd = 4
+      }else if(this.addEvent.groupName == "5"){
+        this.groupNameAdd = 5
+      }else if(this.addEvent.groupName == "6"){
+        this.groupNameAdd = 6
+      }
+      let groupId = this.groupNameAdd;
+      let eventName = this.addEvent.eventName;
+      let timeOccur = this.addEvent.timeOccur;
+      let eventImageUrl = "";
+      let location = this.addEvent.location;
+      let eventID = this.tableData.length + 1;
+      let approveState = 0;
+      let createDate = currentDateWithFormat
+        const req = Request({
+        headers: {
+          Authentication: "asdasdadshkhhasd"
+        }
+      });
+
+      let EventRepository = this.$repository.get("events");
+      let UserRepository = this.$repository.get("users");
+      let AuthRepository = this.$repository.get("auth");
+      let CommentRepository = this.$repository.get("comments");
+      let GroupRepository = this.$repository.get("groups");
+      let NotificationRepository = this.$repository.get("notifications");
+      let PostRepository = this.$repository.get("posts");
+        new EventRepository(req)
+        .create({groupId, eventName, timeOccur, eventImageUrl, location})
+        .then(rs => (
+          this.tableData = rs.data.data
+          ))
+      // axios
+      //   .post(`https://192.168.1.24:8083/api/events`, {
+      //     groupId: this.groupId,
+      //     eventName: this.eventName,
+      //     timeOccur: this.timeOccur,
+      //     eventImageUrl: this.eventImageUrl,
+      //     location: this.location
+      //   })
+      //   .then(response => {
+      //     // this.tableData = response.data.data
+      //   });
       this.addEvent.eventName = "";
       this.addEvent.timeOccur = "";
-      this.addEvent.groupName = "",
-      this.addEvent.location = "",
+      this.addEvent.groupName = "";
+      this.addEvent.location = "";
       this.addEvent.image = "";
     },
     onFileChange(e) {
@@ -250,29 +370,32 @@ export default {
       this.addEvent.image = "";
     },
     handleDelete(index, row) {
-      this.$confirm(
-        "This will permanently delete the file. Continue?",
-        "Warning",
-        {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          this.tableData.splice(index, 1);
-          this.$message({
-            type: "success",
-            message: "Delete completed"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled"
-          });
-        });
+      this.eventIdDelete = row.eventID;
+      axios
+        .delete(`https://192.168.1.24:8083/api/events/` + this.eventIdDelete)
+        .then(response => {});
+      this.tableData.splice(index, 1);
     }
+  },
+  filters: {
+    // groupNameFilter(value) {
+    //   var newValue = ""
+    //   if(value === 1){
+    //     this.value = "F-Code"
+    //   }
+    //   else if(value === 2){
+    //     this.value = "FPT Event Club"
+    //   }else if(value === 3){
+    //     this.value = "FPT Instrument Club"
+    //   }else if(value === 4){
+    //     this.value = "FPT Chess Club"
+    //   }else if(value === 5){
+    //     this.value = "FPT Guitar Club"
+    //   }else if(value === 6){
+    //     this.value = "FPT Vovinam Club"
+    //   }
+    //   return value;
+    // }
   }
 };
 </script>

@@ -32,9 +32,21 @@
       :data="tableData.filter(data => !search || data.GroupId.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-      <el-table-column label="Group Name" prop="groupName" width="180px"></el-table-column>
-      <el-table-column label="Create Date" prop="createDate"></el-table-column>
-      <el-table-column label="Modify Date" prop="modifyDate"></el-table-column>
+      <el-table-column label="GroupID" width="180px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.groupID}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Group Name" width="180px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.groupName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Follower" width="180px">
+        <template slot-scope="scope">
+          <span style="align: center">{{ scope.row.groupFollower}}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="Type to search" />
@@ -65,49 +77,54 @@
 </template>
 
 <script>
+import Request from "../services/RequestBase.js";
+import axios from "axios";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          groupName: "FCC",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-        },
-        {
-          groupName: "F#",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-        },
-        {
-          groupName: "FTI",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-        },
-        {
-          groupName: "FEV",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-        },
-        {
-          groupName: "FVC",
-          modifyDate: "2020-06-29",
-          createDate: "2020-06-29",
-        }
-      ],
+      tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
       form: {
-        groupName: "",
+        groupName: ""
       },
       addGroup: {
-        groupName: "",
+        groupName: ""
       },
+      groupIdDelete: "",
       formLabelWidth: "120px",
       formLabelWidth1: "180px",
       search: "",
-      editedIndex: -1,
+      editedIndex: -1
     };
+  },
+  created: function() {
+    const req = Request({
+      headers: {
+        Authentication: "asdasdadshkhhasd"
+      }
+    });
+
+    let EventRepository = this.$repository.get("events");
+    let UserRepository = this.$repository.get("users");
+    let AuthRepository = this.$repository.get("auth");
+    let CommentRepository = this.$repository.get("comments");
+    let GroupRepository = this.$repository.get("groups");
+    let NotificationRepository = this.$repository.get("notifications");
+    let PostRepository = this.$repository.get("posts");
+    let pageSize = 10;
+    new GroupRepository(req)
+      .get({ pageSize })
+      .then(rs => (this.tableData = rs.data.data))
+      .catch(e => console.error(e));
+    // axios.get(`https://192.168.1.24:8083/api/events`)
+    // .then(response => {
+    //   this.tableData = response.data.data
+    // })
+    // .catch(e => {
+    //   this.errors.push(e)
+    // })
+    // new PostRepository(req).get().then(rs =>(this.tableData = rs.data)).catch(e => console.error(e));
   },
   methods: {
     handleEdit(index, row) {
@@ -123,8 +140,13 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
+      let groupID = this.tableData[this.editedIndex].groupID;
+      axios
+        .patch(`https://192.168.1.24:8083/api/groups/` + groupID, {
+          groupName: this.form.groupName
+        })
+        .then(response => {});
       this.tableData[this.editedIndex].groupName = this.form.groupName;
-      this.tableData[this.editedIndex].modifyDate = currentDateWithFormat;
     },
     confirmAdd() {
       this.dialogFormAddVisible = false;
@@ -133,13 +155,23 @@ export default {
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, "-");
+      let groupName1 = this.addGroup.groupName;
+      let imageUrl1 ="";
+      let managerId1 = "1D8C8527-E1F4-4A77-85EE-68C15F927817";
+      axios
+        .post(`https://192.168.1.24:8083/api/groups`, {
+          imageUrl: imageUrl1,
+          groupName: groupName1,
+          managerId: managerId1
+        })
+        .then(response => {});
+      this.addGroup.groupName = "";
       let GroupDetail = {
-        groupName: this.addGroup.groupName,
-        createDate: currentDateWithFormat
-      };
-      this.tableData.push(GroupDetail);
-      this.addGroup.groupName = "",
-      this.addGroup.image = "";
+        groupID: this.tableData.length +1,
+        groupName: groupName1,
+        groupFollower: 0
+      }
+      this.tableData.push(GroupDetail)
     },
     onFileChange(e) {
       var files = e.target.files || e.dataTransfer.files;
@@ -160,28 +192,11 @@ export default {
       this.addGroup.image = "";
     },
     handleDelete(index, row) {
-      this.$confirm(
-        "This will permanently delete the file. Continue?",
-        "Warning",
-        {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
-          type: "warning"
-        }
-      )
-        .then(() => {
-          this.tableData.splice(index, 1);
-          this.$message({
-            type: "success",
-            message: "Delete completed"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled"
-          });
-        });
+      this.groupIdDelete = row.groupID;
+      axios
+        .delete(`https://192.168.1.24:8083/api/groups/` + this.groupIdDelete)
+        .then(response => {});
+      this.tableData.splice(index, 1);
     }
   }
 };

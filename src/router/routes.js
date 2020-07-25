@@ -1,4 +1,5 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
+import DashboardGroupManager from "@/layout/dashboard/DashboardGroupManager.vue"
 import LoginPageLayout from "@/layout/LoginPage/LoginPageLayout.vue";
 // GeneralViews
 import NotFound from "@/pages/NotFoundPage.vue";
@@ -15,6 +16,9 @@ const TableList = () => import(/* webpackChunkName: "common" */ "@/pages/TableLi
 const UserManagement = () => import(/* webpackChunkName: "common" */ "@/pages/UserManagement.vue");
 const EventManagement = () => import(/* webpackChunkName: "common" */ "@/pages/EventManagement.vue");
 const PostManagement = () => import(/* webpackChunkName: "common" */ "@/pages/PostManagement.vue");
+const UserGM = () => import(/* webpackChunkName: "common" */ "@/pages/UserGM.vue");
+const EventGM = () => import(/* webpackChunkName: "common" */ "@/pages/EventGM.vue");
+const PostGM = () => import(/* webpackChunkName: "common" */ "@/pages/PostGM.vue");
 const GroupManagement = () => import(/* webpackChunkName: "common" */ "@/pages/GroupManagement.vue");
 const routes = [
   {
@@ -26,6 +30,28 @@ const routes = [
         path: "login",
         name: "login",
         component: LoginPage
+      },
+    ]
+  },
+  {
+    path: "/dashboardGM",
+    component: DashboardGroupManager,
+    redirect: "/dashboardGM",
+    children: [
+      {
+        path: "/userGM",
+        name: "userGM",
+        component: UserGM
+      },
+      {
+        path: "/eventGM",
+        name: "eventGM",
+        component: EventGM
+      },
+      {
+        path: "/postGM",
+        name: "postGM",
+        component: PostGM
       },
     ]
   },
