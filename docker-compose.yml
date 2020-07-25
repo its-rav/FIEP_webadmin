@@ -12,4 +12,4 @@ services:
     volumes:
     - '.:/app'
     - /app/node_modules/
-    command: /bin/sh -c "npm run serve"
+    command: /bin/sh -c "npm run dev"

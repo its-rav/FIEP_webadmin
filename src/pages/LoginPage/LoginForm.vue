@@ -9,6 +9,7 @@
       <!--<base-checkbox>
             Option one is this 
         </base-checkbox>-->
+        <button @click.prevent="test">Test</button>
       <base-button
         class="d-block align-middle mx-auto"
         native-type="submit"
@@ -34,6 +35,7 @@ import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import * as firebase from "firebase/app"
 import "firebase/auth";
+import Request from "../../services/RequestBase";
 
 export default {
   props: {
@@ -53,6 +55,26 @@ export default {
     }
   },
   methods: {
+    test(){
+
+      const req=Request({
+        headers:{
+          asD:"test"
+        },ser:1
+      });
+
+      let EventRepository=this.$repository.get("events");
+      let UserRepository=this.$repository.get("users");
+      let AuthRepository=this.$repository.get("auth");
+      let CommentRepository=this.$repository.get("comments");
+      let GroupRepository=this.$repository.get("groups");
+      let NotificationRepository=this.$repository.get("notifications");
+      let PostRepository=this.$repository.get("posts");
+
+ new EventRepository(req).get().then(rs=>console.log(rs)).catch(e=>console.error(e));
+      new EventRepository(req).create({ groupId:1, eventName:"asd", timeOccur:"asd", eventImageUrl:"asd", location:"asd" }).then(rs=>console.log(rs)).catch(e=>console.error(e));
+
+    },
     pressed(){
       alert("press");
     },

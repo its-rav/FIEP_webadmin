@@ -7,6 +7,14 @@ module.exports = {
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src')
-    }
+    },
+    extensions:[".vue",".js"]
+  },
+  module: {
+    loaders: [{
+      test: /\.js?$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader'
+    }]
   }
 };
