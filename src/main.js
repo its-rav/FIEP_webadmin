@@ -23,6 +23,7 @@ const firebaseConfig = config.firebaseConfig;
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFontAwesome } from "@fortawesome/free-brands-svg-icons";
+import store from "./store";
 library.add(faFontAwesome);
 // register component
 Vue.component("font-awesome-icon", FontAwesomeIcon);
@@ -50,6 +51,7 @@ firebase.initializeApp(firebaseConfig);
 /* eslint-disable no-new */
 new Vue({
   router,
+  store,
   i18n,
   render: h => h(App)
 }).$mount("#app");

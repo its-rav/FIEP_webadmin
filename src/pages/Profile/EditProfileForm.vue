@@ -2,39 +2,34 @@
   <card>
     <h5 slot="header" class="title">Edit Profile</h5>
     <div class="row">
-      <div class="col-md-5 pr-md-1">
-        <base-input label="Company (disabled)"
-                  placeholder="Company"
-                  v-model="model.company"
+      <div class="col-md-6 pr-md-1">
+        <base-input label="Project"
+                  placeholder="FIEP"
+                  
                   disabled>
         </base-input>
       </div>
-      <div class="col-md-3 px-md-1">
-        <base-input label="Username"
-                  placeholder="Username"
-                  v-model="model.username">
-        </base-input>
-      </div>
-      <div class="col-md-4 pl-md-1">
+      <div class="col-md-6 pl-md-1">
         <base-input label="Email address"
                   type="email"
-                  placeholder="mike@email.com">
+                  v-model="model.mail"
+        >
         </base-input>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-6 pr-md-1">
-        <base-input label="First Name"
-                  v-model="model.firstName"
-                  placeholder="First Name">
+      <div class="col-md-12 pr-md-1">
+        <base-input label="Full Name"
+                  v-model="model.fullName"
+                  placeholder="Fullname">
         </base-input>
       </div>
-      <div class="col-md-6 pl-md-1">
+      <!-- <div class="col-md-6 pl-md-1">
         <base-input label="Last Name"
                   v-model="model.lastName"
                   placeholder="Last Name">
         </base-input>
-      </div>
+      </div> -->
     </div>
     <div class="row">
       <div class="col-md-12">

@@ -20,6 +20,7 @@ const UserGM = () => import(/* webpackChunkName: "common" */ "@/pages/UserGM.vue
 const EventGM = () => import(/* webpackChunkName: "common" */ "@/pages/EventGM.vue");
 const PostGM = () => import(/* webpackChunkName: "common" */ "@/pages/PostGM.vue");
 const GroupManagement = () => import(/* webpackChunkName: "common" */ "@/pages/GroupManagement.vue");
+const EditProfile = () => import(/* webpackChunkName: "common" */ "@/pages/Profile/EditProfileForm.vue")
 const routes = [
   {
     path: "/",
