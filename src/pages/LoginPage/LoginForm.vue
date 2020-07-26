@@ -72,10 +72,10 @@ export default {
         });
           let dataUser = [];
           dataUser = result.additionalUserInfo.profile.given_name;
-          this.$store.commit("setFullName", this.dataUser);
+          this.$store.commit("setFullName", dataUser);
           this.$store.commit(
             "setEmail",
-            this.result.additionalUserInfo.profile.email
+            result.additionalUserInfo.profile.email
           );
           if (
             dataUser === "Vo Thanh Nhan" ||
