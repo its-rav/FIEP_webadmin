@@ -4,18 +4,12 @@
       <base-input label="Email address" type="email" placeholder="Enter email">
         <!--<small slot="helperText" id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
       </base-input>
-      <base-input label="Password" type="password"  placeholder="Password">
-      </base-input>
+      <base-input label="Password" type="password" placeholder="Password"></base-input>
       <!--<base-checkbox>
             Option one is this 
-        </base-checkbox>-->
-        <button @click.prevent="test">Test</button>
-      <base-button
-        class="d-block align-middle mx-auto"
-        native-type="submit"
-        type="primary"
-        >Login</base-button
-      >
+      </base-checkbox>-->
+      <!-- <button @click.prevent="test">Test</button> -->
+      <base-button class="d-block align-middle mx-auto" native-type="submit" type="primary">Login</base-button>
     </form>
     <p class="w-100 text-center mt-3 text-muted form-text">or</p>
     <div class="social">
@@ -33,9 +27,10 @@
 <script>
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import * as firebase from "firebase/app"
+import * as firebase from "firebase/app";
 import "firebase/auth";
 import Request from "../../services/RequestBase";
+import axios from "axios";
 export default {
   props: {
     model: {
@@ -54,70 +49,80 @@ export default {
     }
   },
   methods: {
-    test(){
-
-      const req=Request({
-        headers:{
-          asD:"test"
-        },ser:1
-      });
-
-      let EventRepository=this.$repository.get("events");
-      let UserRepository=this.$repository.get("users");
-      let AuthRepository=this.$repository.get("auth");
-      let CommentRepository=this.$repository.get("comments");
-      let GroupRepository=this.$repository.get("groups");
-      let NotificationRepository=this.$repository.get("notifications");
-      let PostRepository=this.$repository.get("posts");
-
- new EventRepository(req).get().then(rs=>console.log(rs)).catch(e=>console.error(e));
-      new EventRepository(req).create({ groupId:1, eventName:"asd", timeOccur:"asd", eventImageUrl:"asd", location:"asd" }).then(rs=>console.log(rs)).catch(e=>console.error(e));
-
-    },
-    pressed(){
+    pressed() {
       alert("press");
     },
-    googleSignin(){
-      const provider=new firebase.auth.GoogleAuthProvider();
-
-      firebase.auth().signInWithPopup(provider).then(result=>{
-          console.log(result)
-        this.$notify({
-          message:"Success",
+    googleSignin() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(async result => {
+          var token = await result.user.getIdToken();
+          let tokenBack = ""
+          console.log(token)
+          axios
+        .post(`https://192.168.1.24:8083/api/Auth/login`, {
+          idToken: token
+        })
+        .then(response => {
+          this.tokenBack = response.data
+          this.$store.commit("setIdToken", this.tokenBack);
+          console.log("Token Back", this.tokenBack)
         });
-
-      }).catch(err=>{
-
-        this.$notify({
-          message:"Error"
+          let dataUser = [];
+          dataUser = result.additionalUserInfo.profile.given_name;
+          this.$store.commit("setFullName", dataUser);
+          this.$store.commit(
+            "setEmail",
+            result.additionalUserInfo.profile.email
+          );
+          if (
+            dataUser === "Vo Thanh Nhan" ||
+            dataUser === "Nguyen Hoang Huy" ||
+            dataUser === "Than Quoc Binh"
+          ) {
+            this.$router.replace({ name: "dashboard" });
+          } else if (dataUser === "Nguyen Chanh Thanh") {
+            this.$router.replace({ name: "userGM" });
+          } else {
+            this.$message({
+              type: "info",
+              message: "You do not have permission to log in"
+            });
+          }
+        })
+        .catch(err => {
+          this.$message({
+            type: "info",
+            message: "Login failed"
+          });
         });
-
-      })
     },
-    facebookSignin(){
-      const provider=new firebase.auth.FacebookAuthProvider();
+    facebookSignin() {
+      const provider = new firebase.auth.FacebookAuthProvider();
 
-      firebase.auth().signInWithPopup(provider).then(result=>{
-
-        this.$notify({
-          message:"Success"
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(result => {
+          this.$notify({
+            message: "Success"
+          });
+        })
+        .catch(err => {
+          this.$notify({
+            message: "Error"
+          });
         });
-
-      }).catch(err=>{
-
-        this.$notify({
-          message:"Error"
-        });
-
-      })
     }
-  },
+  }
 };
 </script>
 <style scope>
 .social {
   float: none;
-  margin:20px 0 auto ;
+  margin: 20px 0 auto;
   text-align: center;
 }
 

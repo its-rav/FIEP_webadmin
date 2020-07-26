@@ -81,18 +81,15 @@
                 </div>
                 <b class="caret d-none d-lg-block d-xl-block"></b>
                 <p class="d-lg-none">
-                  Log out
+                  Profile
                 </p>
               </a>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Profile</a>
-              </li>
-              <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Settings</a>
+                <a href="/profile" class="nav-item dropdown-item">Profile</a>
               </li>
               <div class="dropdown-divider"></div>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Log out</a>
+                <a href="/login" class="nav-item dropdown-item">Log out</a>
               </li>
             </base-dropdown>
           </ul>
