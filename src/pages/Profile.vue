@@ -20,20 +20,20 @@
       UserCard
     },
     computed: {
-    // mix the getters into computed with object spread operator
     ...mapGetters([
       'getfullName',
       'getEmail',
-      // ...
-    ])
+    ]),
+    // getFullName1(){
+    //   return "abcdef"
+    // }
     },
     data() {
       return {
-
         model: {
           company: 'Creative Code Inc.',
-          mail: "binhtqse130088@fpt.edu.vn",
-          fullName: "Than Quoc Binh",
+          mail: 'binhtqse130088@fpt.edu.vn',
+          fullName: 'Than QUoc Binh',
           address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
           city: 'Melbourne',
           country: 'Australia',

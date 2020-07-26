@@ -13,6 +13,7 @@
         <base-input label="Email address"
                   type="email"
                   v-model="model.mail"
+                  disabled
         >
         </base-input>
       </div>
@@ -21,7 +22,10 @@
       <div class="col-md-12 pr-md-1">
         <base-input label="Full Name"
                   v-model="model.fullName"
-                  placeholder="Fullname">
+                  placeholder="Fullname"
+                  disabled
+                  >
+                  
         </base-input>
       </div>
       <!-- <div class="col-md-6 pl-md-1">
@@ -83,7 +87,7 @@
           return {};
         }
       }
-    }
+    },
   }
 </script>
 <style>
