@@ -6,8 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     idToken: "",
-    fullName: "",
-    email: "",
+    fullName: "Than Quoc Binh",
+    email: "binhtqse130088@fpt.edu.vn",
   },
   getters: {
     getfullName: state => {

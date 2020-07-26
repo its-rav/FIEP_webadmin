@@ -13,7 +13,7 @@
   import UserCard from './Profile/UserCard'
   import axios from "axios";
   import Request from "../services/RequestBase.js";
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState } from 'vuex'
   export default {
     components: {
       EditProfileForm,
@@ -25,15 +25,25 @@
       'getfullName',
       'getEmail',
       // ...
-    ])
+    ]),
+    ...mapState([
+      'fullName',
+      'email',
+      // ...
+    ]),
+      getName(){
+        return this.getfullName
+      },
+      getEmailFromLogin(){
+        return this.getEmail
+      }
     },
     data() {
       return {
-
         model: {
           company: 'Creative Code Inc.',
-          mail: "binhtqse130088@fpt.edu.vn",
-          fullName: "Than Quoc Binh",
+          mail: this.getName(),
+          fullName: this.getEmailFromLogin(),
           address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
           city: 'Melbourne',
           country: 'Australia',
