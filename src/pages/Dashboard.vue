@@ -3,97 +3,21 @@
 
     <div class="row">
       <div class="col-12">
-        <card type="chart">
-          <template slot="header">
-            <div class="row">
-              <div class="col-sm-6" :class="isRTL ? 'text-right' : 'text-left'">
-                <h5 class="card-category">{{$t('dashboard.totalShipments')}}</h5>
-                <h2 class="card-title">{{$t('dashboard.performance')}}</h2>
-              </div>
-              <div class="col-sm-6">
-                <div class="btn-group btn-group-toggle"
-                     :class="isRTL ? 'float-left' : 'float-right'"
-                     data-toggle="buttons">
-                  <label v-for="(option, index) in bigLineChartCategories"
-                         :key="option"
-                         class="btn btn-sm btn-primary btn-simple"
-                         :class="{active: bigLineChart.activeIndex === index}"
-                         :id="index">
-                    <input type="radio"
-                           @click="initBigChart(index)"
-                           name="options" autocomplete="off"
-                           :checked="bigLineChart.activeIndex === index">
-                    {{option}}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </template>
-          <div class="chart-area">
-            <line-chart style="height: 100%"
-                        ref="bigChart"
-                        chart-id="big-line-chart"
-                        :chart-data="bigLineChart.chartData"
-                        :gradient-colors="bigLineChart.gradientColors"
-                        :gradient-stops="bigLineChart.gradientStops"
-                        :extra-options="bigLineChart.extraOptions">
-            </line-chart>
-          </div>
-        </card>
+        <iframe width="100%" height="450" src="https://datastudio.google.com/embed/reporting/154416b3-b349-46cf-b7da-cbef7e06556d/page/wfaZB" frameborder="0" style="border:0" allowfullscreen></iframe>
       </div>
     </div>
     <div class="row">
       <div class="col-lg-4" :class="{'text-right': isRTL}">
-        <card type="chart">
-          <template slot="header">
-            <h5 class="card-category">{{$t('dashboard.totalShipments')}}</h5>
-            <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary "></i> 763,215</h3>
-          </template>
-          <div class="chart-area">
-            <line-chart style="height: 100%"
-                        chart-id="purple-line-chart"
-                        :chart-data="purpleLineChart.chartData"
-                        :gradient-colors="purpleLineChart.gradientColors"
-                        :gradient-stops="purpleLineChart.gradientStops"
-                        :extra-options="purpleLineChart.extraOptions">
-            </line-chart>
-          </div>
-        </card>
+        <iframe width="100%" height="350" src="https://datastudio.google.com/embed/reporting/f1599565-1bed-4243-a80e-0010a891c132/page/55ZZB" frameborder="0" style="border:0" allowfullscreen></iframe>
       </div>
       <div class="col-lg-4" :class="{'text-right': isRTL}">
-        <card type="chart">
-          <template slot="header">
-            <h5 class="card-category">{{$t('dashboard.dailySales')}}</h5>
-            <h3 class="card-title"><i class="tim-icons icon-delivery-fast text-info "></i> 3,500€</h3>
-          </template>
-          <div class="chart-area">
-            <bar-chart style="height: 100%"
-                       chart-id="blue-bar-chart"
-                       :chart-data="blueBarChart.chartData"
-                       :gradient-stops="blueBarChart.gradientStops"
-                       :extra-options="blueBarChart.extraOptions">
-            </bar-chart>
-          </div>
-        </card>
+        <iframe width="100%" height="350" src="https://datastudio.google.com/embed/reporting/fdf6f33d-a505-452d-afa3-ec95bdb893e2/page/z7ZZB" frameborder="0" style="border:0" allowfullscreen></iframe>
       </div>
       <div class="col-lg-4" :class="{'text-right': isRTL}">
-        <card type="chart">
-          <template slot="header">
-            <h5 class="card-category">{{$t('dashboard.completedTasks')}}</h5>
-            <h3 class="card-title"><i class="tim-icons icon-send text-success "></i> 12,100K</h3>
-          </template>
-          <div class="chart-area">
-            <line-chart style="height: 100%"
-                        chart-id="green-line-chart"
-                        :chart-data="greenLineChart.chartData"
-                        :gradient-stops="greenLineChart.gradientStops"
-                        :extra-options="greenLineChart.extraOptions">
-            </line-chart>
-          </div>
-        </card>
+        <iframe width="100%" height="350" src="https://datastudio.google.com/embed/reporting/177f98c8-1186-47b9-8f8c-9847e43b460a/page/T8ZZB" frameborder="0" style="border:0" allowfullscreen></iframe>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-lg-6 col-md-12">
         <card type="tasks" :header-classes="{'text-right': isRTL}">
           <template slot="header">
@@ -123,7 +47,7 @@
           </div>
         </card>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -133,6 +57,9 @@
   import TaskList from './Dashboard/TaskList';
   import UserTable from './Dashboard/UserTable';
   import config from '@/config';
+  import axios from 'axios';
+
+  import * as firebase from "firebase/app"
 
   export default {
     components: {
@@ -140,6 +67,10 @@
       BarChart,
       TaskList,
       UserTable
+    },
+    created(){
+          const defaultAnalytics = firebase.analytics();
+          defaultAnalytics.logEven
     },
     data() {
       return {
@@ -238,6 +169,7 @@
       }
     },
     methods: {
+
       initBigChart(index) {
         let chartData = {
           datasets: [{
