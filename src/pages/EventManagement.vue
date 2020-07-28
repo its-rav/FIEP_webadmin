@@ -13,18 +13,20 @@
         <el-form-item label="Event Name" :label-width="formLabelWidth">
           <el-input v-model="addEvent.eventName" autocomplete="off"></el-input>
         </el-form-item>
+        <!-- <el-form-item label="Group" :label-width="formLabelWidth">
+          <input   v-model="addEvent.groupName" list="searchGroupTableDataList" placeholder="Type to search" />
+          <datalist id="searchGroupTableDataList" >
+              <option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"/>
+          </datalist>
+        </el-form-item> -->
+
         <el-form-item label="Group" :label-width="formLabelWidth">
           <el-select
             v-model="addEvent.groupName"
             placeholder="Please select a Group"
             style="float: left"
           >
-            <el-option label="F-Code" value="1"></el-option>
-            <el-option label="FPT Event Club" value="2"></el-option>
-            <el-option label="FPT Instrument Club" value="3"></el-option>
-            <el-option label="FPT Chess Club" value="4"></el-option>
-            <el-option label="FPT Guitar Club" value="5"></el-option>
-            <el-option label="FPT Vovinam Club" value="6"></el-option>
+          <el-option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Location" :label-width="formLabelWidth">
@@ -58,9 +60,9 @@
       :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-      <el-table-column label="EventID" :min-width="40">
+      <el-table-column label="EventId" :min-width="40">
         <template slot-scope="scope">
-          <span>{{ scope.row.eventID }}</span>
+          <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Event Name" :min-width="120">
@@ -115,12 +117,7 @@
                   placeholder="Please select a Group"
                   style="float: left"
                 >
-                  <el-option label="F-Code" value="1" v-for="item in items" :key="item.id"></el-option>
-                  <el-option label="FPT Event Club" value="2"></el-option>
-                  <el-option label="FPT Instrument Club" value="3"></el-option>
-                  <el-option label="FPT Chess Club" value="4"></el-option>
-                  <el-option label="FPT Guitar Club" value="5"></el-option>
-                  <el-option label="FPT Vovinam Club" value="6"></el-option>
+                 <el-option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="Location" :label-width="formLabelWidth">
@@ -164,10 +161,13 @@
 <script>
 import axios from "axios";
 import Request from "../services/RequestBase.js";
+import baseConfig from "../config";
+const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
       tableData: [],
+      groupList: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
       form: {
@@ -207,7 +207,11 @@ export default {
     let pageSize = 15
     new EventRepository(req)
       .get({pageSize})
-      .then(rs => (this.tableData = rs.data.data))
+      .then(rs => {this.tableData = rs.data.data; console.log(this.tableData);})
+      .catch(e => console.error(e));
+      new GroupRepository(req)
+      .get()
+      .then(rs => {this.groupList = rs.data.data; console.log(this.groupList);})
       .catch(e => console.error(e));
   },
   mounted: {},
@@ -250,7 +254,7 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let eventEdit = this.tableData[this.editedIndex].eventID;
+      let eventEdit = this.tableData[this.editedIndex].eventId;
       let stateEdit = ""
       let groupNameEdit = ""
       if(this.form.state === "1"){
@@ -271,8 +275,9 @@ export default {
       }else if(this.form.groupName == "6"){
         this.groupNameEdit = 6
       }
+      
       axios
-        .patch(`https://192.168.1.24:8083/api/events/` + eventEdit, {
+        .patch(backendIp+`/api/events/` + eventEdit, {
           eventName: this.form.eventName,
           timeOccur: this.form.timeOccur,
           groupId: this.groupNameEdit,
@@ -313,7 +318,7 @@ export default {
       let timeOccur = this.addEvent.timeOccur;
       let eventImageUrl = "";
       let location = this.addEvent.location;
-      let eventID = this.tableData.length + 1;
+      let eventId = this.tableData.length + 1;
       let approveState = 0;
       let createDate = currentDateWithFormat
         const req = Request({
@@ -334,6 +339,15 @@ export default {
         .then(rs => (
           this.tableData = rs.data.data
           ))
+          let EventAdd = {
+            eventName: this.addEvent.eventName,
+            groupID: this.addEvent.groupName,
+            location: this.addEvent.location,
+            timeOccur: this.addEvent.timeOccur,
+            createDate: currentDateWithFormat,
+            eventId: this.tableData.length+1,
+          }
+          this.tableData.push(EventAdd),
       // axios
       //   .post(`https://192.168.1.24:8083/api/events`, {
       //     groupId: this.groupId,
@@ -370,9 +384,9 @@ export default {
       this.addEvent.image = "";
     },
     handleDelete(index, row) {
-      this.eventIdDelete = row.eventID;
+      this.eventIdDelete = row.eventId;
       axios
-        .delete(`https://192.168.1.24:8083/api/events/` + this.eventIdDelete)
+        .delete(backendIp+`/api/events/` + this.eventIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
     }

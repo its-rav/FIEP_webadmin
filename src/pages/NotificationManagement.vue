@@ -6,15 +6,18 @@
       @click="dialogFormAddVisible = true"
       style="margin-bottom: 15px"
       plain
-    >Add new Post</el-button>
-<el-dialog title="Add new Post" :visible.sync="dialogFormAddVisible">
-      <el-form :model="addPost">
-        <el-form-item label="Post Content" :label-width="formLabelWidth">
-          <el-input v-model="addPost.postContent" autocomplete="off"></el-input>
+    >Add Notification for Event</el-button>
+<el-dialog title="Add Notification for Event" :visible.sync="dialogFormAddVisible">
+      <el-form :model="addNotification">
+        <el-form-item label="Title" :label-width="formLabelWidth">
+          <el-input v-model="addNotification.title" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="Event" :label-width="formLabelWidth">
+        <el-form-item label="Content" :label-width="formLabelWidth">
+          <el-input v-model="addNotification.content" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="EventId" :label-width="formLabelWidth">
           <el-select
-            v-model="addPost.eventName"
+            v-model="addNotification.eventName"
             placeholder="Please select a Event"
             style="float: left"
           >
@@ -27,15 +30,6 @@
             <el-option label="Martial art for women day" value="6"></el-option> -->
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="Image" :label-width="formLabelWidth">
-          <div v-if="!image">
-            <input type="file" @change="onFileChange()" />
-          </div>
-          <div v-else>
-            <img :src="image"/>
-            <button @click="removeImage()">Remove image</button>
-          </div>
-        </el-form-item>-->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormAddVisible = false">Cancel</el-button>
@@ -44,56 +38,66 @@
     </el-dialog>
     <el-button
       type="primary"
-      @click="dialogCommentAddVisible = true"
-      style="margin-bottom: 15px; margin-left: 20px"
+      @click="dialogGroupAddVisible = true"
+      style="margin-bottom: 15px; margin-left: 15px"
       plain
-    >Add new Comment</el-button>
-    <el-dialog title="Add new Comment" :visible.sync="dialogCommentAddVisible">
-      <el-form :model="addComment">
-        <el-form-item label="Content" :label-width="formLabelWidth">
-          <el-input v-model="addComment.content" autocomplete="off"></el-input>
+    >Add Notification for Group</el-button>
+<el-dialog title="Add Notification for Group" :visible.sync="dialogGroupAddVisible">
+      <el-form :model="addNotificationGroup">
+        <el-form-item label="Title" :label-width="formLabelWidth">
+          <el-input v-model="addNotificationGroup.title" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="Event" :label-width="formLabelWidth">
+        <el-form-item label="Content" :label-width="formLabelWidth">
+          <el-input v-model="addNotificationGroup.content" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="GroupId" :label-width="formLabelWidth">
           <el-select
-            v-model="addComment.postId"
-            placeholder="Please select a Post"
+            v-model="addNotificationGroup.groupName"
+            placeholder="Please select a Group"
             style="float: left"
           >
-          <el-option v-for="item in tableData" :key="item.postId" :label="item.postContent" :value="item.postId"></el-option>
-            <!-- <el-option label="Hey hey hey" value="5f22c086-1259-46a2-b5c8-6b68eb41b784"></el-option>
-            <el-option label="Một tấm hình đẹp kỉ niệm event lần này" value="97da7c08-78a8-4c18-bca3-422c42f7778a"></el-option>
-            <el-option label="Các bạn đã chuẩn bị tới đâu rồi nào" value="a67e6424-c865-4e13-b271-d8ac9a337517"></el-option>
-            <el-option label="Luôn có đồ ăn trưa cho các nhé hehe !" value="88e898ce-d163-4873-8943-c0f828b92d33"></el-option> -->
+          <el-option v-for="item in listGroup" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+            <!-- <el-option label="F-Code" value="1"></el-option>
+            <el-option label="FPT Event Club" value="2"></el-option>
+            <el-option label="FPT Instrument Club" value="3"></el-option>
+            <el-option label="FPT Chess Club" value="4"></el-option>
+            <el-option label="FPT Guitar Club" value="5"></el-option>
+            <el-option label="FPT Vovinam Club" value="6"></el-option> -->
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogCommentAddVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="confirmAddComment()">Confirm</el-button>
+        <el-button @click="dialogGroupAddVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="confirmAddGroup()">Confirm</el-button>
       </span>
     </el-dialog>
     <el-table
       :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-    <el-table-column label="PostId" width="180px">
+    <el-table-column label="NotificationID" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.postId}}</span>
+          <span>{{ scope.row.notificationID}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="EventId" width="100px">
+      <el-table-column label="Title" width="200px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.title}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Body" :min-width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.body}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="EventId">
         <template slot-scope="scope">
           <span>{{ scope.row.eventId}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Post Content" :min-width="120">
+      <el-table-column label="GroupId">
         <template slot-scope="scope">
-          <span>{{ scope.row.postContent}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Create Date">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createDate}}</span>
+          <span>{{ scope.row.groupId}}</span>
         </template>
       </el-table-column>
       <el-table-column align="right">
@@ -136,18 +140,20 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
-      dialogCommentAddVisible: false,
+      dialogGroupAddVisible: false,
       form: {
         eventName: "",
         postContent: ""
       },
-      addPost: {
-        postContent: "",
-        eventName: ""
-      },
-      addComment: {
+      addNotification: {
         content: "",
-        postId: ""
+        eventName: "",
+        title: ""
+      },
+      addNotificationGroup: {
+        content: "",
+        title: "",
+        groupName: ""
       },
       formLabelWidth: "120px",
       formLabelWidth1: "180px",
@@ -155,6 +161,7 @@ export default {
       editedIndex: -1,
       postIdDelete: "",
       listEvent: [],
+      listGroup: []
     };
   },
   created: function() {
@@ -172,13 +179,17 @@ export default {
     let NotificationRepository = this.$repository.get("notifications");
     let PostRepository = this.$repository.get("posts");
     let pageSize = ""
-    new PostRepository(req)
+    new NotificationRepository(req)
       .get()
       .then(rs => (this.tableData = rs.data.data))
       .catch(e => console.error(e));
-      new EventRepository(req)
+    new EventRepository(req)
       .get()
       .then(rs => (this.listEvent = rs.data.data))
+      .catch(e => console.error(e));
+      new GroupRepository(req)
+      .get()
+      .then(rs => (this.listGroup = rs.data.data))
       .catch(e => console.error(e));
   },
   methods: {
@@ -188,27 +199,27 @@ export default {
       this.form.eventName = row.eventName;
       this.form.postContent = row.postContent;
     },
-    confirm(index, row) {
-      var currentDate = new Date();
-      var currentDateWithFormat = new Date()
-        .toJSON()
-        .slice(0, 10)
-        .replace(/-/g, "-");
-      this.dialogFormVisible = false;
-      let postId = this.tableData[this.editedIndex].postId;
-      axios
-        .patch(backendIp+`/api/posts/` + postId, {
-          postContent: this.form.postContent
-        })
-        .then(response => {});
-      this.tableData[this.editedIndex].postContent = this.form.postContent;
-      var currentDate = new Date();
-      var currentDateWithFormat = new Date()
-        .toJSON()
-        .slice(0, 10)
-        .replace(/-/g, "-");
-      this.dialogFormVisible = false;
-    },
+    // confirm(index, row) {
+    //   var currentDate = new Date();
+    //   var currentDateWithFormat = new Date()
+    //     .toJSON()
+    //     .slice(0, 10)
+    //     .replace(/-/g, "-");
+    //   this.dialogFormVisible = false;
+    //   let postID = this.tableData[this.editedIndex].postID;
+    //   axios
+    //     .patch(`https://192.168.1.24:8083/api/posts/` + postID, {
+    //       postContent: this.form.postContent
+    //     })
+    //     .then(response => {});
+    //   this.tableData[this.editedIndex].postContent = this.form.postContent;
+    //   var currentDate = new Date();
+    //   var currentDateWithFormat = new Date()
+    //     .toJSON()
+    //     .slice(0, 10)
+    //     .replace(/-/g, "-");
+    //   this.dialogFormVisible = false;
+    // },
     makeid(length) {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -225,36 +236,49 @@ export default {
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, "-");
-        let eventId1 = this.addPost.eventName;
+        let eventId1 = this.addNotification.eventName;
       let imageUrl1 ="";
-      let postContent1 = this.addPost.postContent;
+      let content1 = this.addNotification.content;
+      let title1 = this.addNotification.title;
       axios
-        .post(backendIp+`/api/posts`, {
-          postContent: postContent1,
-          eventId: eventId1,
+        .put(backendIp+`/api/events/`+eventId1+`/notification`, {
+          body: content1,
+          title: title1,
         })
         .then(response => {});
       let PostDetail = {
         eventId: eventId1,
-        postContent: postContent1,
-        createDate: currentDateWithFormat,
-        postId: this.makeid(32),
+        title: title1,
+        body: content1,
+        notificationID: this.makeid(32),
       };
       this.tableData.push(PostDetail);
-      this.addPost.eventName = "";
-      this.addPost.postContent = "";
+      this.addNotification.eventName = "";
+      this.addNotification.content = "";
+      this.addNotification.title = ""
     },
-    confirmAddComment() {
-      this.dialogCommentAddVisible = false;
+    confirmAddGroup() {
+      this.dialogGroupAddVisible = false;
+      let groupId1 = this.addNotificationGroup.groupName;
+      let imageUrl1 ="";
+      let content1 = this.addNotificationGroup.content;
+      let title1 = this.addNotificationGroup.title;
       axios
-        .post(backendIp+`/api/comments`, {
-          content: this.addComment.content,
-          postId: this.addComment.postId,
-          userId: "1D8C8527-E1F4-4A77-85EE-68C15F927817"
+        .put(backendIp+`/api/groups/`+groupId1+`/notification`, {
+          body: content1,
+          title: title1,
         })
         .then(response => {});
-      this.addComment.content = "";
-      this.addComment.postId = "";
+      let PostDetail1 = {
+        groupId: groupId1,
+        title: title1,
+        body: content1,
+        notificationID: this.makeid(32),
+      };
+      this.tableData.push(PostDetail1);
+      this.addNotificationGroup.groupName = "";
+      this.addNotificationGroup.content = "";
+      this.addNotificationGroup.title = ""
     },
     onFileChange(e) {
       var files = e.target.files || e.dataTransfer.files;
@@ -275,11 +299,11 @@ export default {
       this.addPost.image = "";
     },
     handleDelete(index, row) {
-      this.postIdDelete = row.postId;
-      axios
-        .delete(backendIp+`/api/posts/` + this.postIdDelete)
-        .then(response => {});
-      this.tableData.splice(index, 1);
+      // this.postIdDelete = row.postID;
+      // axios
+      //   .delete(`https://192.168.1.24:8083/api/posts/` + this.postIdDelete)
+      //   .then(response => {});
+      // this.tableData.splice(index, 1);
     }
   }
 };
