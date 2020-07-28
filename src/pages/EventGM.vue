@@ -58,9 +58,9 @@
       :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-      <el-table-column label="EventID" :min-width="40">
+      <el-table-column label="EventId" :min-width="40">
         <template slot-scope="scope">
-          <span>{{ scope.row.eventID }}</span>
+          <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Event Name" :min-width="120">
@@ -149,6 +149,8 @@
 <script>
 import axios from "axios";
 import Request from "../services/RequestBase.js";
+import baseConfig from "../config";
+const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
@@ -228,7 +230,7 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let eventEdit = this.tableData[this.editedIndex].eventID;
+      let eventEdit = this.tableData[this.editedIndex].eventId;
       let stateEdit = ""
       let groupNameEdit = ""
       if(this.form.groupName == "1"){
@@ -245,7 +247,7 @@ export default {
         this.groupNameEdit = 6
       }
       axios
-        .patch(`https://192.168.1.24:8083/api/events/` + eventEdit, {
+        .patch(backendIp+`/api/events/` + eventEdit, {
           eventName: this.form.eventName,
           timeOccur: this.form.timeOccur,
           groupId: this.groupNameEdit,
@@ -339,9 +341,9 @@ export default {
       this.addEvent.image = "";
     },
     handleDelete(index, row) {
-      this.eventIdDelete = row.eventID;
+      this.eventIdDelete = row.eventId;
       axios
-        .delete(`https://192.168.1.24:8083/api/events/` + this.eventIdDelete)
+        .delete(backendIp+`/api/events/` + this.eventIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
     }

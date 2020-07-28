@@ -1,4 +1,5 @@
 export default {
+  backendIp : "https://172.20.10.2:8083",
   colors: {
     default: "#344675",
     primary: "#42b883",

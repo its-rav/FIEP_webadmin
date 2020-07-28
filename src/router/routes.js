@@ -21,6 +21,7 @@ const EventGM = () => import(/* webpackChunkName: "common" */ "@/pages/EventGM.v
 const PostGM = () => import(/* webpackChunkName: "common" */ "@/pages/PostGM.vue");
 const GroupManagement = () => import(/* webpackChunkName: "common" */ "@/pages/GroupManagement.vue");
 const EditProfile = () => import(/* webpackChunkName: "common" */ "@/pages/Profile/EditProfileForm.vue")
+const NotificationManagement = () => import(/* webpackChunkName: "common" */ "@/pages/NotificationManagement.vue")
 const routes = [
   {
     path: "/",
@@ -115,6 +116,11 @@ const routes = [
         path: "/groupmanagement",
         name: "groupmanagement",
         component: GroupManagement
+      },
+      {
+        path: "/notificationmanagement",
+        name: "notificationmanagement",
+        component: NotificationManagement
       }
     ]
   },

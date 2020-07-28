@@ -76,6 +76,8 @@
 <script>
 import axios from "axios";
 import Request from "../services/RequestBase.js";
+import baseConfig from "../config";
+const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
@@ -135,7 +137,7 @@ export default {
       this.dialogFormVisible = false;
       let userId = this.tableData[this.editedIndex].userId;
       axios
-        .patch(`https://192.168.1.24:8083/api/users/` + userId, {
+        .patch(backendIp+`/api/users/` + userId, {
           roleId: 2,
           email: this.form.email,
           fullName: this.form.fullName
@@ -157,7 +159,7 @@ export default {
     confirmAdd(formName) {
       this.dialogFormAddVisible = false;
       axios
-        .post(`https://192.168.1.24:8083/api/users`, {
+        .post(backendIp+`/api/users`, {
           fullName: this.addUser.fullName,
           email: this.addUser.email,
           roleId: 2
@@ -194,7 +196,7 @@ export default {
     handleDelete(index, row) {
       this.userIdDelete = row.userId;
       axios
-        .delete(`https://192.168.1.24:8083/api/users/` + this.userIdDelete)
+        .delete(backendIp+`/api/users/` + this.userIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
     }

@@ -19,12 +19,13 @@
             placeholder="Please select a Event"
             style="float: left"
           >
-            <el-option label="ACM" value="1"></el-option>
+          <el-option v-for="item in listEvent" :key="item.eventId" :label="item.eventName" :value="item.eventId"></el-option>
+            <!-- <el-option label="ACM" value="1"></el-option>
             <el-option label="Tiktok conpetition" value="2"></el-option>
             <el-option label="Club celebration" value="3"></el-option>
             <el-option label="Guitar free style" value="4"></el-option>
             <el-option label="Reduce plastic together" value="5"></el-option>
-            <el-option label="Martial art for women day" value="6"></el-option>
+            <el-option label="Martial art for women day" value="6"></el-option> -->
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="Image" :label-width="formLabelWidth">
@@ -48,7 +49,7 @@
     >
     <el-table-column label="PostId" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.postID}}</span>
+          <span>{{ scope.row.postId}}</span>
         </template>
       </el-table-column>
       <el-table-column label="EventId" width="100px">
@@ -98,6 +99,8 @@
 <script>
 import axios from "axios";
 import Request from "../services/RequestBase.js";
+import baseConfig from "../config";
+const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
@@ -116,7 +119,8 @@ export default {
       formLabelWidth1: "180px",
       search: "",
       editedIndex: -1,
-      postIdDelete: ""
+      postIdDelete: "",
+      listEvent: [],
     };
   },
   created: function() {
@@ -138,6 +142,10 @@ export default {
       .get()
       .then(rs => (this.tableData = rs.data.data))
       .catch(e => console.error(e));
+      new EventRepository(req)
+      .get()
+      .then(rs => (this.listEvent = rs.data.data))
+      .catch(e => console.error(e));
   },
   methods: {
     handleEdit(index, row) {
@@ -153,9 +161,9 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let postID = this.tableData[this.editedIndex].postID;
+      let postId = this.tableData[this.editedIndex].postId;
       axios
-        .patch(`https://192.168.1.24:8083/api/posts/` + postID, {
+        .patch(backendIp+`/api/posts/` + postId, {
           postContent: this.form.postContent
         })
         .then(response => {});
@@ -187,7 +195,7 @@ export default {
       let imageUrl1 ="";
       let postContent1 = this.addPost.postContent;
       axios
-        .post(`https://192.168.1.24:8083/api/posts`, {
+        .post(backendIp+`/api/posts`, {
           postContent: postContent1,
           eventId: eventId1,
         })
@@ -196,7 +204,7 @@ export default {
         eventId: eventId1,
         postContent: postContent1,
         createDate: currentDateWithFormat,
-        postID: this.makeid(32),
+        postId: this.makeid(32),
       };
       this.tableData.push(PostDetail);
       this.addPost.eventName = "";
@@ -221,9 +229,9 @@ export default {
       this.addPost.image = "";
     },
     handleDelete(index, row) {
-      this.postIdDelete = row.postID;
+      this.postIdDelete = row.postId;
       axios
-        .delete(`https://192.168.1.24:8083/api/posts/` + this.postIdDelete)
+        .delete(backendIp+`/api/posts/` + this.postIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
     }

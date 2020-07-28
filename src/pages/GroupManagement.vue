@@ -29,12 +29,12 @@
       </span>
     </el-dialog>
     <el-table
-      :data="tableData.filter(data => !search || data.GroupId.toLowerCase().includes(search.toLowerCase()))"
+      :data="tableData.filter(data => !search || data.groupId.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
-      <el-table-column label="GroupID" width="180px">
+      <el-table-column label="GroupId" width="180px">
         <template slot-scope="scope">
-          <span>{{ scope.row.groupID}}</span>
+          <span>{{ scope.row.groupId}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Group Name" width="180px">
@@ -79,6 +79,8 @@
 <script>
 import Request from "../services/RequestBase.js";
 import axios from "axios";
+import baseConfig from "../config";
+const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
@@ -140,9 +142,9 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let groupID = this.tableData[this.editedIndex].groupID;
+      let groupId = this.tableData[this.editedIndex].groupId;
       axios
-        .patch(`https://192.168.1.24:8083/api/groups/` + groupID, {
+        .patch(backendIp+`/api/groups/` + groupId, {
           groupName: this.form.groupName
         })
         .then(response => {});
@@ -159,7 +161,7 @@ export default {
       let imageUrl1 ="";
       let managerId1 = "1D8C8527-E1F4-4A77-85EE-68C15F927817";
       axios
-        .post(`https://192.168.1.24:8083/api/groups`, {
+        .post(backendIp+`/api/groups`, {
           imageUrl: imageUrl1,
           groupName: groupName1,
           managerId: managerId1
@@ -167,7 +169,7 @@ export default {
         .then(response => {});
       this.addGroup.groupName = "";
       let GroupDetail = {
-        groupID: this.tableData.length +1,
+        groupId: this.tableData.length +1,
         groupName: groupName1,
         groupFollower: 1
       }
@@ -192,9 +194,9 @@ export default {
       this.addGroup.image = "";
     },
     handleDelete(index, row) {
-      this.groupIdDelete = row.groupID;
+      this.groupIdDelete = row.groupId;
       axios
-        .delete(`https://192.168.1.24:8083/api/groups/` + this.groupIdDelete)
+        .delete(backendIp+`/api/groups/` + this.groupIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
     }
