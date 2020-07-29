@@ -97,6 +97,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-row style="margin-top: 10px">
+      <el-col :span="6" :offset="11">
+        <el-button v-for="item in pagination"  :key="item.pageId"
+                    :label="item.pageId"
+                    :value="item.pageId" circle @click="paginationLoad(item.pageId)" type="success">{{item.pageId}}</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -125,7 +132,9 @@ export default {
       formLabelWidth: "120px",
       search: "",
       editedIndex: -1,
-      userIdDelete: ""
+      userIdDelete: "",
+      pagination: [],
+      totalPages: 0
     };
   },
   created: function() {
@@ -134,21 +143,32 @@ export default {
         Authentication: "asdasdadshkhhasd"
       }
     });
-
-    let EventRepository = this.$repository.get("events");
     let UserRepository = this.$repository.get("users");
-    let AuthRepository = this.$repository.get("auth");
-    let CommentRepository = this.$repository.get("comments");
-    let GroupRepository = this.$repository.get("groups");
-    let NotificationRepository = this.$repository.get("notifications");
-    let PostRepository = this.$repository.get("posts");
-    let pageSize = 10;
+    let pageSize = 5
     new UserRepository(req)
-      .get()
-      .then(rs => (this.tableData = rs.data.data))
+      .get({pageSize})
+      .then(rs => {
+        this.tableData = rs.data.data;
+        this.totalPages = rs.data.totalPages;
+        for (let i = 0; i < this.totalPages; i++) {
+          this.pagination.push({ pageId: i + 1, pageName: "page" });
+        }
+      })
       .catch(e => console.error(e));
   },
   methods: {
+    paginationLoad(pageNumber) {
+      const req = Request();
+      let pageSize = 5;
+      let UserRepository = this.$repository.get("users");
+      new UserRepository(req)
+        .get({ pageSize, pageNumber })
+        .then(rs => {
+          this.tableData = rs.data.data;
+          console.log(this.tableData);
+        })
+        .catch(e => console.error(e));
+    },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);

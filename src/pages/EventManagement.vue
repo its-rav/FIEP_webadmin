@@ -18,7 +18,7 @@
           <datalist id="searchGroupTableDataList" >
               <option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"/>
           </datalist>
-        </el-form-item> -->
+        </el-form-item>-->
 
         <el-form-item label="Group" :label-width="formLabelWidth">
           <el-select
@@ -26,7 +26,12 @@
             placeholder="Please select a Group"
             style="float: left"
           >
-          <el-option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+            <el-option
+              v-for="item in groupList"
+              :key="item.groupId"
+              :label="item.groupName"
+              :value="item.groupId"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Location" :label-width="formLabelWidth">
@@ -117,7 +122,12 @@
                   placeholder="Please select a Group"
                   style="float: left"
                 >
-                 <el-option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+                  <el-option
+                    v-for="item in groupList"
+                    :key="item.groupId"
+                    :label="item.groupName"
+                    :value="item.groupId"
+                  ></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="Location" :label-width="formLabelWidth">
@@ -155,6 +165,19 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-row style="margin-top: 10px">
+      <el-col :span="6" :offset="11">
+        <el-button
+          v-for="item in pagination"
+          :key="item.pageId"
+          :label="item.pageId"
+          :value="item.pageId"
+          circle
+          @click="paginationLoad(item.pageId)"
+          type="success"
+        >{{item.pageId}}</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -162,7 +185,7 @@
 import axios from "axios";
 import Request from "../services/RequestBase.js";
 import baseConfig from "../config";
-const backendIp=baseConfig.backendIp;
+const backendIp = baseConfig.backendIp;
 export default {
   data() {
     return {
@@ -187,7 +210,9 @@ export default {
       formLabelWidth1: "180px",
       search: "",
       editedIndex: -1,
-      eventIdDelete: ""
+      eventIdDelete: "",
+      pagination: [],
+      totalPages: 0
     };
   },
   created: function() {
@@ -198,42 +223,56 @@ export default {
     });
 
     let EventRepository = this.$repository.get("events");
-    let UserRepository = this.$repository.get("users");
-    let AuthRepository = this.$repository.get("auth");
-    let CommentRepository = this.$repository.get("comments");
     let GroupRepository = this.$repository.get("groups");
-    let NotificationRepository = this.$repository.get("notifications");
-    let PostRepository = this.$repository.get("posts");
-    let pageSize = 15
+    let pageSize = 5;
+
     new EventRepository(req)
-      .get({pageSize})
-      .then(rs => {this.tableData = rs.data.data; console.log(this.tableData);})
+      .get({ pageSize })
+      .then(rs => {
+        this.tableData = rs.data.data;
+        this.totalPages = rs.data.totalPages;
+        for (let i = 0; i < this.totalPages; i++) {
+          this.pagination.push({ pageId: i + 1, pageName: "page" });
+        }
+      })
       .catch(e => console.error(e));
-      new GroupRepository(req)
+    new GroupRepository(req)
       .get()
-      .then(rs => {this.groupList = rs.data.data; console.log(this.groupList);})
+      .then(rs => {
+        this.groupList = rs.data.data;
+      })
       .catch(e => console.error(e));
   },
-  mounted: {},
   methods: {
+    paginationLoad(pageNumber) {
+      const req = Request();
+      let pageSize = 5;
+      let EventRepository = this.$repository.get("events");
+      new EventRepository(req)
+        .get({ pageSize, pageNumber })
+        .then(rs => {
+          this.tableData = rs.data.data;
+          console.log(this.tableData);
+        })
+        .catch(e => console.error(e));
+    },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.eventName = row.eventName;
-      let groupNm = ""
-      if(row.groupID === 1){
-        this.groupNm = "F-Code"
-      }
-      else if(row.groupID === 2){
-        this.groupNm = "FPT Event Club"
-      }else if(row.groupID === 3){
-        this.groupNm = "FPT Instrument Club"
-      }else if(row.groupID === 4){
-        this.groupNm = "FPT Chess Club"
-      }else if(row.groupID === 5){
-        this.groupNm = "FPT Guitar Club"
-      }else if(row.groupID === 6){
-        this.groupNm = "FPT Vovinam Club"
+      let groupNm = "";
+      if (row.groupID === 1) {
+        this.groupNm = "F-Code";
+      } else if (row.groupID === 2) {
+        this.groupNm = "FPT Event Club";
+      } else if (row.groupID === 3) {
+        this.groupNm = "FPT Instrument Club";
+      } else if (row.groupID === 4) {
+        this.groupNm = "FPT Chess Club";
+      } else if (row.groupID === 5) {
+        this.groupNm = "FPT Guitar Club";
+      } else if (row.groupID === 6) {
+        this.groupNm = "FPT Vovinam Club";
       }
       this.form.groupName = this.groupNm;
       this.form.location = row.location;
@@ -255,29 +294,29 @@ export default {
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
       let eventEdit = this.tableData[this.editedIndex].eventId;
-      let stateEdit = ""
-      let groupNameEdit = ""
-      if(this.form.state === "1"){
-        this.stateEdit = 1
-      }else if(this.form.state === "0"){
-        this.stateEdit = 0
+      let stateEdit = "";
+      let groupNameEdit = "";
+      if (this.form.state === "1") {
+        this.stateEdit = 1;
+      } else if (this.form.state === "0") {
+        this.stateEdit = 0;
       }
-      if(this.form.groupName == "1"){
-        this.groupNameEdit = 1
-      }else if(this.form.groupName == "2"){
-        this.groupNameEdit = 2
-      }else if(this.form.groupName == "3"){
-        this.groupNameEdit = 3
-      }else if(this.form.groupName == "4"){
-        this.groupNameEdit = 4
-      }else if(this.form.groupName == "5"){
-        this.groupNameEdit = 5
-      }else if(this.form.groupName == "6"){
-        this.groupNameEdit = 6
+      if (this.form.groupName == "1") {
+        this.groupNameEdit = 1;
+      } else if (this.form.groupName == "2") {
+        this.groupNameEdit = 2;
+      } else if (this.form.groupName == "3") {
+        this.groupNameEdit = 3;
+      } else if (this.form.groupName == "4") {
+        this.groupNameEdit = 4;
+      } else if (this.form.groupName == "5") {
+        this.groupNameEdit = 5;
+      } else if (this.form.groupName == "6") {
+        this.groupNameEdit = 6;
       }
-      
+
       axios
-        .patch(backendIp+`/api/events/` + eventEdit, {
+        .patch(backendIp + `/api/events/` + eventEdit, {
           eventName: this.form.eventName,
           timeOccur: this.form.timeOccur,
           groupId: this.groupNameEdit,
@@ -299,19 +338,19 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let groupNameAdd = ""
-      if(this.addEvent.groupName == "1"){
-        this.groupNameAdd = 1
-      }else if(this.addEvent.groupName == "2"){
-        this.groupNameAdd = 2
-      }else if(this.addEvent.groupName == "3"){
-        this.groupNameAdd = 3
-      }else if(this.addEvent.groupName == "4"){
-        this.groupNameAdd = 4
-      }else if(this.addEvent.groupName == "5"){
-        this.groupNameAdd = 5
-      }else if(this.addEvent.groupName == "6"){
-        this.groupNameAdd = 6
+      let groupNameAdd = "";
+      if (this.addEvent.groupName == "1") {
+        this.groupNameAdd = 1;
+      } else if (this.addEvent.groupName == "2") {
+        this.groupNameAdd = 2;
+      } else if (this.addEvent.groupName == "3") {
+        this.groupNameAdd = 3;
+      } else if (this.addEvent.groupName == "4") {
+        this.groupNameAdd = 4;
+      } else if (this.addEvent.groupName == "5") {
+        this.groupNameAdd = 5;
+      } else if (this.addEvent.groupName == "6") {
+        this.groupNameAdd = 6;
       }
       let groupId = this.groupNameAdd;
       let eventName = this.addEvent.eventName;
@@ -320,8 +359,8 @@ export default {
       let location = this.addEvent.location;
       let eventId = this.tableData.length + 1;
       let approveState = 0;
-      let createDate = currentDateWithFormat
-        const req = Request({
+      let createDate = currentDateWithFormat;
+      const req = Request({
         headers: {
           Authentication: "asdasdadshkhhasd"
         }
@@ -334,32 +373,37 @@ export default {
       let GroupRepository = this.$repository.get("groups");
       let NotificationRepository = this.$repository.get("notifications");
       let PostRepository = this.$repository.get("posts");
-        new EventRepository(req)
-        .create({groupId, eventName, timeOccur, eventImageUrl, location})
-        .then(rs => (
-          this.tableData = rs.data.data
-          ))
-          let EventAdd = {
-            eventName: this.addEvent.eventName,
-            groupID: this.addEvent.groupName,
-            location: this.addEvent.location,
-            timeOccur: this.addEvent.timeOccur,
-            createDate: currentDateWithFormat,
-            eventId: this.tableData.length+1,
-          }
-          this.tableData.push(EventAdd),
-      // axios
-      //   .post(`https://192.168.1.24:8083/api/events`, {
-      //     groupId: this.groupId,
-      //     eventName: this.eventName,
-      //     timeOccur: this.timeOccur,
-      //     eventImageUrl: this.eventImageUrl,
-      //     location: this.location
+      new EventRepository(req)
+        .create({ groupId, eventName, timeOccur, eventImageUrl, location })
+        .then(rs => (this.tableData = rs.data.data));
+      // this.getDate(),
+      //   new EventRepository(req)
+      // .get()
+      // .then(rs => {
+      //   this.tableData = rs.data.data; console.log(this.tableData);
       //   })
-      //   .then(response => {
-      //     // this.tableData = response.data.data
-      //   });
-      this.addEvent.eventName = "";
+      // .catch(e => console.error(e));
+      let EventAdd = {
+        eventName: this.addEvent.eventName,
+        groupID: this.addEvent.groupName,
+        location: this.addEvent.location,
+        timeOccur: this.addEvent.timeOccur,
+        createDate: currentDateWithFormat,
+        eventId: this.tableData.length + 1
+      };
+      this.tableData.push(EventAdd),
+        // axios
+        //   .post(`https://192.168.1.24:8083/api/events`, {
+        //     groupId: this.groupId,
+        //     eventName: this.eventName,
+        //     timeOccur: this.timeOccur,
+        //     eventImageUrl: this.eventImageUrl,
+        //     location: this.location
+        //   })
+        //   .then(response => {
+        //     // this.tableData = response.data.data
+        //   });
+        (this.addEvent.eventName = "");
       this.addEvent.timeOccur = "";
       this.addEvent.groupName = "";
       this.addEvent.location = "";
@@ -386,30 +430,10 @@ export default {
     handleDelete(index, row) {
       this.eventIdDelete = row.eventId;
       axios
-        .delete(backendIp+`/api/events/` + this.eventIdDelete)
+        .delete(backendIp + `/api/events/` + this.eventIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
     }
-  },
-  filters: {
-    // groupNameFilter(value) {
-    //   var newValue = ""
-    //   if(value === 1){
-    //     this.value = "F-Code"
-    //   }
-    //   else if(value === 2){
-    //     this.value = "FPT Event Club"
-    //   }else if(value === 3){
-    //     this.value = "FPT Instrument Club"
-    //   }else if(value === 4){
-    //     this.value = "FPT Chess Club"
-    //   }else if(value === 5){
-    //     this.value = "FPT Guitar Club"
-    //   }else if(value === 6){
-    //     this.value = "FPT Vovinam Club"
-    //   }
-    //   return value;
-    // }
   }
 };
 </script>
