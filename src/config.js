@@ -3,7 +3,7 @@ export default {
   // backendIp : "https://172.20.10.4:8083",
   // backendIp: "https://localhost:8083",
   pageSize:3,
-  backendIp:"https://192.168.1.24:8083",
+  backendIp:"https://localhost:8083",
   colors: {
     default: "#344675",
     primary: "#42b883",

@@ -7,8 +7,8 @@
       <div class="block block-two"></div>
       <div class="block block-three"></div>
       <div class="block block-four"></div>
-      <a href="#">
-        <img class="avatar" src="img/anime6.png" alt="...">
+      <a :href=user.avatarUrl>
+        <img class="avatar" :src=user.avatarUrl :alt="user.avatarUrl">
         <h5 class="title">{{user.fullName}}</h5>
       </a>
       <p class="description">

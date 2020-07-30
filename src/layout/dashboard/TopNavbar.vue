@@ -77,7 +77,7 @@
                            menu-classes="dropdown-navbar">
               <a slot="title" href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="true">
                 <div class="photo">
-                  <img src="img/anime3.png">
+                  <img :src="getUserAvatar">
                 </div>
                 <b class="caret d-none d-lg-block d-xl-block"></b>
                 <p class="d-lg-none">
@@ -108,6 +108,14 @@
       Modal
     },
     computed: {
+      getUserAvatar(){
+        let user=JSON.parse(localStorage.getItem("userInfo"));
+        return user.avatarUrl;
+      },
+      userFullname(){
+        let user=JSON.parse(localStorage.getItem("userInfo"));
+        return user.fullName;
+      },
       routeName() {
         const { name } = this.$route;
         return this.capitalizeFirstLetter(name);
