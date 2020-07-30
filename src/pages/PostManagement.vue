@@ -19,23 +19,8 @@
             style="float: left"
           >
           <el-option v-for="item in listEvent" :key="item.eventId" :label="item.eventName" :value="item.eventId"></el-option>
-            <!-- <el-option label="ACM" value="1"></el-option>
-            <el-option label="Tiktok conpetition" value="2"></el-option>
-            <el-option label="Club celebration" value="3"></el-option>
-            <el-option label="Guitar free style" value="4"></el-option>
-            <el-option label="Reduce plastic together" value="5"></el-option>
-            <el-option label="Martial art for women day" value="6"></el-option> -->
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="Image" :label-width="formLabelWidth">
-          <div v-if="!image">
-            <input type="file" @change="onFileChange()" />
-          </div>
-          <div v-else>
-            <img :src="image"/>
-            <button @click="removeImage()">Remove image</button>
-          </div>
-        </el-form-item>-->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormAddVisible = false">Cancel</el-button>
@@ -60,10 +45,6 @@
             style="float: left"
           >
           <el-option v-for="item in tableData" :key="item.postId" :label="item.postContent" :value="item.postId"></el-option>
-            <!-- <el-option label="Hey hey hey" value="5f22c086-1259-46a2-b5c8-6b68eb41b784"></el-option>
-            <el-option label="Một tấm hình đẹp kỉ niệm event lần này" value="97da7c08-78a8-4c18-bca3-422c42f7778a"></el-option>
-            <el-option label="Các bạn đã chuẩn bị tới đâu rồi nào" value="a67e6424-c865-4e13-b271-d8ac9a337517"></el-option>
-            <el-option label="Luôn có đồ ăn trưa cho các nhé hehe !" value="88e898ce-d163-4873-8943-c0f828b92d33"></el-option> -->
           </el-select>
         </el-form-item>
       </el-form>
@@ -122,6 +103,19 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-row style="margin-top: 10px">
+      <el-col :span="6" :offset="11">
+        <el-button
+          v-for="item in pagination"
+          :key="item.pageId"
+          :label="item.pageId"
+          :value="item.pageId"
+          circle
+          @click="paginationLoad(item.pageId)"
+          type="success"
+        >{{item.pageId}}</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -155,6 +149,8 @@ export default {
       editedIndex: -1,
       postIdDelete: "",
       listEvent: [],
+      pagination: [],
+      totalPages: 0
     };
   },
   created: function() {
@@ -171,10 +167,16 @@ export default {
     let GroupRepository = this.$repository.get("groups");
     let NotificationRepository = this.$repository.get("notifications");
     let PostRepository = this.$repository.get("posts");
-    let pageSize = ""
+    let pageSize = 5
     new PostRepository(req)
-      .get()
-      .then(rs => (this.tableData = rs.data.data))
+      .get({pageSize})
+      .then(rs => {
+        this.tableData = rs.data.data;
+        this.totalPages = rs.data.totalPages;
+        for (let i = 0; i < this.totalPages; i++) {
+          this.pagination.push({ pageId: i + 1, pageName: "page" });
+        }
+      })
       .catch(e => console.error(e));
       new EventRepository(req)
       .get()
@@ -182,6 +184,18 @@ export default {
       .catch(e => console.error(e));
   },
   methods: {
+    paginationLoad(pageNumber) {
+      const req = Request();
+      let pageSize = 5;
+      let PostRepository = this.$repository.get("posts");
+      new PostRepository(req)
+        .get({ pageSize, pageNumber })
+        .then(rs => {
+          this.tableData = rs.data.data;
+          console.log(this.tableData);
+        })
+        .catch(e => console.error(e));
+    },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);

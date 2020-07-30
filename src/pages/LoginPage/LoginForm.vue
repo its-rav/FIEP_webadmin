@@ -31,6 +31,8 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import Request from "../../services/RequestBase";
 import axios from "axios";
+import baseConfig from "../../config";
+const backendIp=baseConfig.backendIp;
 export default {
   props: {
     model: {
@@ -60,15 +62,15 @@ export default {
         .then(async result => {
           var token = await result.user.getIdToken();
           let tokenBack = ""
-          console.log(token)
           axios
-        .post(`https://192.168.1.24:8083/api/Auth/login`, {
+        .post(backendIp+`/api/Auth/login`, {
           idToken: token
         })
         .then(response => {
           this.tokenBack = response.data
           this.$store.commit("setIdToken", this.tokenBack);
           console.log("Token Back", this.tokenBack)
+          console.log("DAta", this.response.data)
         });
           let dataUser = [];
           dataUser = result.additionalUserInfo.profile.given_name;

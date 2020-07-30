@@ -73,6 +73,19 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-row style="margin-top: 10px">
+      <el-col :span="6" :offset="11">
+        <el-button
+          v-for="item in pagination"
+          :key="item.pageId"
+          :label="item.pageId"
+          :value="item.pageId"
+          circle
+          @click="paginationLoad(item.pageId)"
+          type="success"
+        >{{item.pageId}}</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -97,7 +110,9 @@ export default {
       formLabelWidth: "120px",
       formLabelWidth1: "180px",
       search: "",
-      editedIndex: -1
+      editedIndex: -1,
+      pagination: [],
+      totalPages: 0
     };
   },
   created: function() {
@@ -114,21 +129,31 @@ export default {
     let GroupRepository = this.$repository.get("groups");
     let NotificationRepository = this.$repository.get("notifications");
     let PostRepository = this.$repository.get("posts");
-    let pageSize = 10;
+    let pageSize = 5;
     new GroupRepository(req)
       .get({ pageSize })
-      .then(rs => (this.tableData = rs.data.data))
+      .then(rs => {
+        this.tableData = rs.data.data;
+        this.totalPages = rs.data.totalPages;
+        for (let i = 0; i < this.totalPages; i++) {
+          this.pagination.push({ pageId: i + 1, pageName: "page" });
+        }
+      })
       .catch(e => console.error(e));
-    // axios.get(`https://192.168.1.24:8083/api/events`)
-    // .then(response => {
-    //   this.tableData = response.data.data
-    // })
-    // .catch(e => {
-    //   this.errors.push(e)
-    // })
-    // new PostRepository(req).get().then(rs =>(this.tableData = rs.data)).catch(e => console.error(e));
   },
   methods: {
+    paginationLoad(pageNumber) {
+      const req = Request();
+      let pageSize = 5;
+      let GroupRepository = this.$repository.get("groups");
+      new GroupRepository(req)
+        .get({ pageSize, pageNumber })
+        .then(rs => {
+          this.tableData = rs.data.data;
+          console.log(this.tableData);
+        })
+        .catch(e => console.error(e));
+    },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
@@ -199,7 +224,7 @@ export default {
         .delete(backendIp+`/api/groups/` + this.groupIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
-    }
-  }
+    },
+  },
 };
 </script>

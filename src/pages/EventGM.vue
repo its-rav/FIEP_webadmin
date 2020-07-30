@@ -143,6 +143,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-row style="margin-top: 10px">
+      <el-col :span="6" :offset="11">
+        <el-button v-for="item in pagination"  :key="item.pageId"
+                    :label="item.pageId"
+                    :value="item.pageId" circle @click="paginationLoad(item.pageId)" type="success">{{item.pageId}}</el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -154,6 +161,8 @@ const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
+      pagination: [],
+      totalPages: 0,
       tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
@@ -191,14 +200,32 @@ export default {
     let GroupRepository = this.$repository.get("groups");
     let NotificationRepository = this.$repository.get("notifications");
     let PostRepository = this.$repository.get("posts");
-    let pageSize = 15
+    let pageSize = 5
     new EventRepository(req)
       .get({pageSize})
-      .then(rs => (this.tableData = rs.data.data))
+      .then(rs => {
+        this.tableData = rs.data.data;
+        this.totalPages = rs.data.totalPages;
+        for (let i = 0; i < this.totalPages; i++) {
+          this.pagination.push({ pageId: i + 1, pageName: "page" });
+        }
+      })
       .catch(e => console.error(e));
   },
   mounted: {},
   methods: {
+    paginationLoad(pageNumber) {
+      const req = Request();
+      let pageSize = 5;
+      let EventRepository = this.$repository.get("events");
+      new EventRepository(req)
+        .get({ pageSize, pageNumber })
+        .then(rs => {
+          this.tableData = rs.data.data;
+          console.log(this.tableData);
+        })
+        .catch(e => console.error(e));
+    },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
@@ -346,27 +373,36 @@ export default {
         .delete(backendIp+`/api/events/` + this.eventIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
+    },
+    async loadBreweries() {
+      const req = Request();
+      let pageSize = 5;
+      let pageNumber = this.currentPage;
+      let EventRepository = this.$repository.get("events");
+      new EventRepository(req)
+        .get({ pageSize, pageNumber })
+        .then(rs => {
+          this.tableData = rs.data.data;
+          console.log(this.tableData);
+        })
+        .catch(e => console.error(e));  
+    },
+    nextPage:function() {
+      this.currentPage++;
+      this.loadBreweries();
+    },
+    prevPage:function() {
+      if(this.currentPage > 1) this.currentPage--;
+      this.loadBreweries();
     }
   },
-  filters: {
-    // groupNameFilter(value) {
-    //   var newValue = ""
-    //   if(value === 1){
-    //     this.value = "F-Code"
-    //   }
-    //   else if(value === 2){
-    //     this.value = "FPT Event Club"
-    //   }else if(value === 3){
-    //     this.value = "FPT Instrument Club"
-    //   }else if(value === 4){
-    //     this.value = "FPT Chess Club"
-    //   }else if(value === 5){
-    //     this.value = "FPT Guitar Club"
-    //   }else if(value === 6){
-    //     this.value = "FPT Vovinam Club"
-    //   }
-    //   return value;
-    // }
+  created:function() {
+    this.loadBreweries();
+  },
+  computed:{
+    cantGoBack() {
+      return this.currentPage === 1;
+    }
   }
 };
 </script>
