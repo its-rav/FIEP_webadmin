@@ -19,30 +19,50 @@
       EditProfileForm,
       UserCard
     },
+    methods:{
+      getUserInfo(){
+          return this.$store.getters.getUserInfo;
+      }
+    },
     computed: {
-    ...mapGetters([
-      'getfullName',
-      'getEmail',
-    ]),
+    
     // getFullName1(){
     //   return "abcdef"
     // }
     },
+    created(){
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      console.log(userInfo)
+      this.user={
+        fullName:userInfo.fullName,
+        title:userInfo.role.toUpperCase(),
+        avatarUrl:userInfo.avatarUrl
+      };
+      this.model={
+          company: '',
+          mail: userInfo.mail,
+          fullName: userInfo.fullName,
+          address: userInfo.role.toUpperCase(),
+          city: '',
+          country: '',
+          about: ''
+      }
+    },
     data() {
       return {
         model: {
-          company: 'Creative Code Inc.',
-          mail: 'binhtqse130088@fpt.edu.vn',
-          fullName: 'Than QUoc Binh',
-          address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
-          city: 'Melbourne',
-          country: 'Australia',
-          about: 'Lamborghini Mercy, Your chick she so thirsty, I\'m in that two seat Lambo.'
+          company: '',
+          mail: '',
+          fullName: '',
+          address: '',
+          city: '',
+          country: '',
+          about: ''
         },
         user: {
-          fullName: "Than Quoc Binh",
-          title: 'Ceo/Co-Founder',
-          description: `Do not be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...`,
+          fullName: "",
+          title: '',
+          description: ``,
         }
       }
     },

@@ -8,6 +8,7 @@
         <sidebar-link to="/postmanagement" :name="$t('post management')" icon="tim-icons icon-bell-55"/>
         <sidebar-link to="/groupmanagement" :name="$t('group management')" icon="tim-icons icon-single-02"/>
         <sidebar-link to="/notificationmanagement" :name="$t('notification management')" icon="tim-icons icon-single-02"/>
+        <sidebar-link to="/profile" :name="$t('profile')" icon="tim-icons icon-badge"/>
       </template>
     </side-bar>
     <div class="main-panel">

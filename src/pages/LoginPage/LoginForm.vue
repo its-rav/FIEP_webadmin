@@ -55,46 +55,46 @@ export default {
       alert("press");
     },
     googleSignin() {
+      let req = Request();
+      let AuthRepository = this.$repository.get("auth");
+      let authRepoInstance=new AuthRepository(req);
+
       const provider = new firebase.auth.GoogleAuthProvider();
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(async result => {
-          var token = await result.user.getIdToken();
-          let tokenBack = ""
-          axios
-        .post(backendIp+`/api/Auth/login`, {
-          idToken: token
-        })
-        .then(response => {
-          this.tokenBack = response.data
-          this.$store.commit("setIdToken", this.tokenBack);
-          console.log("Token Back", this.tokenBack)
-          console.log("DAta", this.response.data)
-        });
-          let dataUser = [];
-          dataUser = result.additionalUserInfo.profile.given_name;
-          this.$store.commit("setFullName", dataUser);
-          this.$store.commit(
-            "setEmail",
-            result.additionalUserInfo.profile.email
-          );
-          if (
-            dataUser === "Vo Thanh Nhan" ||
-            dataUser === "Nguyen Hoang Huy" ||
-            dataUser === "Than Quoc Binh"
-          ) {
-            this.$router.replace({ name: "dashboard" });
-          } else if (dataUser === "Nguyen Chanh Thanh") {
-            this.$router.replace({ name: "userGM" });
-          } else {
+
+      firebase.auth().signInWithPopup(provider).then(async (result) => {
+
+          let token = await result.user.getIdToken();
+
+          let loginResult = await authRepoInstance.login(token);
+          
+          let user=loginResult.data.userInfo
+          user.avatarUrl=result.user.photoURL;
+          let returnToken=loginResult.data.token;
+
+          localStorage.setItem("userInfo",JSON.stringify(user));
+          this.$message({
+            message: "Log in successfully"
+          });
+          if(user){
+              if(user.role==="admin"){
+                this.$router.push({ name: "dashboard" });
+              }else if (user.role==="groupmanager"){
+                this.$router.push({ name: "userGM" });
+              }else{
+                this.$message({
+                  type: "warning",
+                  message: "You do not have permission to log in."
+                });
+              }
+          }else{
             this.$message({
-              type: "info",
-              message: "You do not have permission to log in"
+              type: "warning",
+              message: "Fail to log in"
             });
           }
-        })
-        .catch(err => {
+
+        }).catch(err => {
+          localStorage.removeItem("userInfo")
           this.$message({
             type: "info",
             message: "Login failed"
