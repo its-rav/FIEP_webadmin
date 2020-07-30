@@ -3,7 +3,8 @@ export default {
   backendIp : "https://192.168.1.24:8083",
   // backendIp: "https://localhost:8083",
   pageSize:3,
-  // backendIp:"https://localhost:8083",
+  // backendIp:"https:
+  backendIp:"https://fiep-api.azurewebsites.net",
   colors: {
     default: "#344675",
     primary: "#42b883",
