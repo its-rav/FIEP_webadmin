@@ -102,7 +102,7 @@
       </el-table-column>
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput(search)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -126,7 +126,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px" v-if="searchResult == null">
+    <el-row style="margin-top: 10px" v-if="searchResult == null|| this.rsPage === 1">
       <el-col :span="6" :offset="11">
         <el-button
           v-for="item in pagination"
@@ -177,7 +177,8 @@ export default {
       listEvent: [],
       listGroup: [],
        pagination: [],
-      totalPages: 0
+      totalPages: 0,
+      rsPage : 0,
     };
   },
   created: function() {
@@ -222,7 +223,11 @@ export default {
       new NotificationRepository(req)
         .get({ pageSize, pageNumber })
         .then(rs => {
-          this.tableData = rs.data.data;
+          if(this.searchResult === null){
+            this.tableData = rs.data.data;
+          }else{
+            this.searchResult = rs.data.data;
+          }
           console.log(this.tableData);
         })
         .catch(e => console.error(e));
@@ -340,6 +345,11 @@ export default {
       // this.tableData.splice(index, 1);
     },
     async onSearchInput(e){
+      if(this.search === ""){
+        this.rsPage = 1
+      }else{
+        this.rsPage = 0
+      }
       try {
         let result=await axios.get(`${backendIp}/api/notifications?query=${e}`);
       console.log(result);

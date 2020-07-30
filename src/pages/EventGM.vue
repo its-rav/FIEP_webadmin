@@ -95,7 +95,7 @@
       </el-table-column>-->
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput(search)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -161,6 +161,7 @@ const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
+      rsPage : 0,
       groupList: [],
       pagination: [],
       totalPages: 0,
@@ -235,14 +236,16 @@ export default {
     paginationLoad(pageNumber) {
       const req = Request();
       let pageSize = 5;
-      let EventRepository = this.$repository.get("events");
-      new EventRepository(req)
-        .get({ pageSize, pageNumber })
-        .then(rs => {
-          this.tableData = rs.data.data;
-          console.log(this.tableData);
+      axios
+        .get(backendIp+`/api/groups/1/events`, {
         })
-        .catch(e => console.error(e));
+        .then(rs => {
+         if(this.searchResult === null){
+            this.tableData = rs.data.data;
+          }else{
+            this.searchResult = rs.data.data;
+          }
+      })
     },
     handleEdit(index, row) {
       this.dialogFormVisible = true;
@@ -370,8 +373,13 @@ export default {
       this.tableData.splice(index, 1);
     },
     async onSearchInput(e){
+      if(this.search === ""){
+        this.rsPage = 1
+      }else{
+        this.rsPage = 0
+      }
       try {
-        let result=await axios.get(`${backendIp}/api/events?query=${e}`);
+        let result=await axios.get(`${backendIp}/api/groups/1/events?query=${e}`);
 
       console.log(result);
         this.searchResult= result.data.data;

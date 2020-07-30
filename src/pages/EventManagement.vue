@@ -84,9 +84,9 @@
           <span>{{ scope.row.location }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Approval State">
+      <el-table-column label="State">
         <template slot-scope="scope">
-          <span>{{ scope.row.approveState === 1 ? "Aprrove" : "Pending" }}</span>
+          <span>{{ scope.row.approveState === 1 ? "Approve" : "Pending" }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Time Occur" prop="timeOccur">
@@ -101,7 +101,7 @@
       </el-table-column>
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput(search)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -159,7 +159,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px" v-if="searchResult == null">
+    <el-row style="margin-top: 10px" v-if="searchResult === null || this.rsPage === 1">
       <el-col :span="6" :offset="11">
         <el-button
           v-for="item in pagination"
@@ -183,6 +183,7 @@ const backendIp = baseConfig.backendIp;
 export default {
   data() {
     return {
+      rsPage : 0,
       tableData: [],
       searchResult: null,
       groupList: [],
@@ -246,7 +247,11 @@ export default {
       new EventRepository(req)
         .get({ pageSize, pageNumber })
         .then(rs => {
-          this.tableData = rs.data.data;
+          if(this.searchResult === null){
+            this.tableData = rs.data.data;
+          }else{
+            this.searchResult = rs.data.data;
+          }
           console.log(this.tableData);
         })
         .catch(e => console.error(e));
@@ -391,10 +396,16 @@ export default {
       this.tableData.splice(index, 1);
     },
     async onSearchInput(e){
+      if(this.search === ""){
+        this.rsPage = 1
+      }else{
+        this.rsPage = 0
+      }
+      // if(search === ""){
+      //   this.rsPage = 1
+      // }
       try {
         let result=await axios.get(`${backendIp}/api/events?query=${e}`);
-
-      console.log(result);
         this.searchResult= result.data.data;
       } catch (error) {
         this.searchResult = null;
