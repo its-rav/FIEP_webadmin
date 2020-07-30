@@ -1,8 +1,7 @@
 <template>
   <div class="wrapper">
-    <side-bar>
+    <side-bar title="FIEP Group Manager">
       <template slot="links">
-        <sidebar-link to="/userGM" :name="$t('user management')" icon="tim-icons icon-atom"/>
         <sidebar-link to="/eventGM" :name="$t('event management')" icon="tim-icons icon-pin"/>
         <sidebar-link to="/postGM" :name="$t('post management')" icon="tim-icons icon-bell-55"/>
         <sidebar-link to="/myprofile" :name="$t('profile')" icon="tim-icons icon-badge"/>

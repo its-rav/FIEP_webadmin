@@ -85,7 +85,7 @@
                 </p>
               </a>
               <li class="nav-link">
-                <a href="/profile" class="nav-item dropdown-item">Profile</a>
+                <a :href="isAdmin?'/profile':'/myprofile'" class="nav-item dropdown-item">Profile</a>
               </li>
               <div class="dropdown-divider"></div>
               <li class="nav-link">
@@ -111,6 +111,11 @@
       getUserAvatar(){
         let user=JSON.parse(localStorage.getItem("userInfo"));
         return user.avatarUrl;
+      },
+      isAdmin(){
+        let user=JSON.parse(localStorage.getItem("userInfo"));
+        console.log(user)
+        return user.roleId===1;
       },
       userFullname(){
         let user=JSON.parse(localStorage.getItem("userInfo"));
