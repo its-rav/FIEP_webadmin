@@ -64,12 +64,12 @@
       :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
-      <el-table-column label="EventId" :min-width="40">
+      <el-table-column label="EventId" :min-width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Event Name" :min-width="140">
+      <el-table-column label="Event Name" :min-width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.eventName }}</span>
         </template>

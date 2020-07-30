@@ -58,12 +58,12 @@
       :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
-      <el-table-column label="EventId" :min-width="40">
+      <el-table-column label="EventId" :min-width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Event Name" :min-width="140">
+      <el-table-column label="Event Name" :min-width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.eventName }}</span>
         </template>
@@ -203,16 +203,26 @@ export default {
     let NotificationRepository = this.$repository.get("notifications");
     let PostRepository = this.$repository.get("posts");
     let pageSize = 5
-    new EventRepository(req)
-      .get({pageSize})
-      .then(rs => {
+    axios
+        .get(backendIp+`/api/groups/1/events`, {
+        })
+        .then(rs => {
         this.tableData = rs.data.data;
         this.totalPages = rs.data.totalPages;
         for (let i = 0; i < this.totalPages; i++) {
           this.pagination.push({ pageId: i + 1, pageName: "page" });
         }
       })
-      .catch(e => console.error(e));
+    // new EventRepository(req)
+    //   .get({pageSize})
+    //   .then(rs => {
+    //     this.tableData = rs.data.data;
+    //     this.totalPages = rs.data.totalPages;
+    //     for (let i = 0; i < this.totalPages; i++) {
+    //       this.pagination.push({ pageId: i + 1, pageName: "page" });
+    //     }
+    //   })
+    //   .catch(e => console.error(e));
       new GroupRepository(req)
       .get()
       .then(rs => {
