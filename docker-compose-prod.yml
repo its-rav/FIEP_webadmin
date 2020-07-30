@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+    fiep-fe:
+        container_name: fiep-fe-prod
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes: 
+        - ./nginx/logs:/var/log/nginx/:rw
+        ports:
+            - '80:80'
+            - '443:443'
+
+            

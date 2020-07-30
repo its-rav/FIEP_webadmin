@@ -1,0 +1,15 @@
+# for local development
+version: '3.7'
+services:
+  fiep-fe:
+    container_name: fiep-fe
+    build:
+      context: .
+      target: 'dev-stage'
+      dockerfile: Dockerfile
+    ports:
+    - '8080:8080'
+    volumes:
+    - '.:/app'
+    - /app/node_modules/
+    command: /bin/sh -c "npm run dev"
