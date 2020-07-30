@@ -69,12 +69,12 @@
           <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Event Name" :min-width="120">
+      <el-table-column label="Event Name" :min-width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.eventName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Group Name" :min-width="70">
+      <el-table-column label="Group Name" :min-width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.groupName}}</span>
         </template>
@@ -326,20 +326,6 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      // let groupNameAdd = "";
-      // if (this.addEvent.groupName == "1") {
-      //   this.groupNameAdd = 1;
-      // } else if (this.addEvent.groupName == "2") {
-      //   this.groupNameAdd = 2;
-      // } else if (this.addEvent.groupName == "3") {
-      //   this.groupNameAdd = 3;
-      // } else if (this.addEvent.groupName == "4") {
-      //   this.groupNameAdd = 4;
-      // } else if (this.addEvent.groupName == "5") {
-      //   this.groupNameAdd = 5;
-      // } else if (this.addEvent.groupName == "6") {
-      //   this.groupNameAdd = 6;
-      // }
       let groupId = this.addEvent.groupName;
       let eventName = this.addEvent.eventName;
       let timeOccur = this.addEvent.timeOccur;
@@ -364,13 +350,6 @@ export default {
       new EventRepository(req)
         .create({ groupId, eventName, timeOccur, eventImageUrl, location })
         .then(rs => (this.tableData = rs.data.data));
-      // this.getDate(),
-      //   new EventRepository(req)
-      // .get()
-      // .then(rs => {
-      //   this.tableData = rs.data.data; console.log(this.tableData);
-      //   })
-      // .catch(e => console.error(e));
       let EventAdd = {
         eventName: this.addEvent.eventName,
         groupID: this.addEvent.groupName,
@@ -380,17 +359,6 @@ export default {
         eventId: this.tableData.length + 1
       };
       this.tableData.push(EventAdd),
-        // axios
-        //   .post(`https://192.168.1.24:8083/api/events`, {
-        //     groupId: this.groupId,
-        //     eventName: this.eventName,
-        //     timeOccur: this.timeOccur,
-        //     eventImageUrl: this.eventImageUrl,
-        //     location: this.location
-        //   })
-        //   .then(response => {
-        //     // this.tableData = response.data.data
-        //   });
       this.addEvent.eventName = "";
       this.addEvent.timeOccur = "";
       this.addEvent.groupName = "";

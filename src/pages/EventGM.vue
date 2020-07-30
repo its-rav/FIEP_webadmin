@@ -63,14 +63,14 @@
           <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Event Name" :min-width="120">
+      <el-table-column label="Event Name" :min-width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.eventName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Group Name" :min-width="70">
+      <el-table-column label="Group Name" :min-width="120">
         <template slot-scope="scope">
-          <span>{{ scope.row.groupID}}</span>
+          <span>{{ scope.row.groupName}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Location" width="180px">
@@ -238,22 +238,7 @@ export default {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.eventName = row.eventName;
-      let groupNm = ""
-      if(row.groupID === 1){
-        this.groupNm = "F-Code"
-      }
-      else if(row.groupID === 2){
-        this.groupNm = "FPT Event Club"
-      }else if(row.groupID === 3){
-        this.groupNm = "FPT Instrument Club"
-      }else if(row.groupID === 4){
-        this.groupNm = "FPT Chess Club"
-      }else if(row.groupID === 5){
-        this.groupNm = "FPT Guitar Club"
-      }else if(row.groupID === 6){
-        this.groupNm = "FPT Vovinam Club"
-      }
-      this.form.groupName = this.groupNm;
+      this.form.groupName = row.groupName;
       this.form.location = row.location;
       this.form.timeOccur = row.timeOccur;
       console.log(this.editedIndex);
@@ -310,27 +295,15 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let groupNameAdd = ""
-      if(this.addEvent.groupName == "1"){
-        this.groupNameAdd = 1
-      }else if(this.addEvent.groupName == "2"){
-        this.groupNameAdd = 2
-      }else if(this.addEvent.groupName == "3"){
-        this.groupNameAdd = 3
-      }else if(this.addEvent.groupName == "4"){
-        this.groupNameAdd = 4
-      }else if(this.addEvent.groupName == "5"){
-        this.groupNameAdd = 5
-      }else if(this.addEvent.groupName == "6"){
-        this.groupNameAdd = 6
-      }
-      let groupId = this.groupNameAdd;
+      let groupId = this.addEvent.groupName;
       let eventName = this.addEvent.eventName;
       let timeOccur = this.addEvent.timeOccur;
       let eventImageUrl = "";
       let location = this.addEvent.location;
-      let createDate = currentDateWithFormat
-        const req = Request({
+      let eventId = this.tableData.length + 1;
+      let approveState = 0;
+      let createDate = currentDateWithFormat;
+      const req = Request({
         headers: {
           Authentication: "asdasdadshkhhasd"
         }
@@ -343,22 +316,18 @@ export default {
       let GroupRepository = this.$repository.get("groups");
       let NotificationRepository = this.$repository.get("notifications");
       let PostRepository = this.$repository.get("posts");
-        new EventRepository(req)
-        .create({groupId, eventName, timeOccur, eventImageUrl, location})
-        .then(rs => (
-          this.tableData = rs.data.data
-          ))
-      // axios
-      //   .post(`https://192.168.1.24:8083/api/events`, {
-      //     groupId: this.groupId,
-      //     eventName: this.eventName,
-      //     timeOccur: this.timeOccur,
-      //     eventImageUrl: this.eventImageUrl,
-      //     location: this.location
-      //   })
-      //   .then(response => {
-      //     // this.tableData = response.data.data
-      //   });
+      new EventRepository(req)
+        .create({ groupId, eventName, timeOccur, eventImageUrl, location })
+        .then(rs => (this.tableData = rs.data.data));
+      let EventAdd = {
+        eventName: this.addEvent.eventName,
+        groupID: this.addEvent.groupName,
+        location: this.addEvent.location,
+        timeOccur: this.addEvent.timeOccur,
+        createDate: currentDateWithFormat,
+        eventId: this.tableData.length + 1
+      };
+      this.tableData.push(EventAdd),
       this.addEvent.eventName = "";
       this.addEvent.timeOccur = "";
       this.addEvent.groupName = "";
