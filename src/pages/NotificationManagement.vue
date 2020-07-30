@@ -126,7 +126,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px">
+    <el-row style="margin-top: 10px" v-if="searchResult == null">
       <el-col :span="6" :offset="11">
         <el-button
           v-for="item in pagination"

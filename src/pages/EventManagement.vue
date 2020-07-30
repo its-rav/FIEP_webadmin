@@ -99,11 +99,6 @@
           <span>{{ scope.row.createDate}}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="Modify Date">
-        <template slot-scope="scope">
-        <span>{{ scope.row.modifyDate }}</span>
-      </template>
-      </el-table-column>-->
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
           <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
@@ -331,21 +326,21 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let groupNameAdd = "";
-      if (this.addEvent.groupName == "1") {
-        this.groupNameAdd = 1;
-      } else if (this.addEvent.groupName == "2") {
-        this.groupNameAdd = 2;
-      } else if (this.addEvent.groupName == "3") {
-        this.groupNameAdd = 3;
-      } else if (this.addEvent.groupName == "4") {
-        this.groupNameAdd = 4;
-      } else if (this.addEvent.groupName == "5") {
-        this.groupNameAdd = 5;
-      } else if (this.addEvent.groupName == "6") {
-        this.groupNameAdd = 6;
-      }
-      let groupId = this.groupNameAdd;
+      // let groupNameAdd = "";
+      // if (this.addEvent.groupName == "1") {
+      //   this.groupNameAdd = 1;
+      // } else if (this.addEvent.groupName == "2") {
+      //   this.groupNameAdd = 2;
+      // } else if (this.addEvent.groupName == "3") {
+      //   this.groupNameAdd = 3;
+      // } else if (this.addEvent.groupName == "4") {
+      //   this.groupNameAdd = 4;
+      // } else if (this.addEvent.groupName == "5") {
+      //   this.groupNameAdd = 5;
+      // } else if (this.addEvent.groupName == "6") {
+      //   this.groupNameAdd = 6;
+      // }
+      let groupId = this.addEvent.groupName;
       let eventName = this.addEvent.eventName;
       let timeOccur = this.addEvent.timeOccur;
       let eventImageUrl = "";
@@ -396,7 +391,7 @@ export default {
         //   .then(response => {
         //     // this.tableData = response.data.data
         //   });
-        (this.addEvent.eventName = "");
+      this.addEvent.eventName = "";
       this.addEvent.timeOccur = "";
       this.addEvent.groupName = "";
       this.addEvent.location = "";

@@ -19,12 +19,12 @@
             placeholder="Please select a Group"
             style="float: left"
           >
-            <el-option label="F-Code" value="1"></el-option>
-            <el-option label="FPT Event Club" value="2"></el-option>
-            <el-option label="FPT Instrument Club" value="3"></el-option>
-            <el-option label="FPT Chess Club" value="4"></el-option>
-            <el-option label="FPT Guitar Club" value="5"></el-option>
-            <el-option label="FPT Vovinam Club" value="6"></el-option>
+            <el-option
+                    v-for="item in groupList"
+                    :key="item.groupId"
+                    :label="item.groupName"
+                    :value="item.groupId"
+                  ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Location" :label-width="formLabelWidth">
@@ -110,12 +110,12 @@
                   placeholder="Please select a Group"
                   style="float: left"
                 >
-                  <el-option label="F-Code" value="1" v-for="item in items" :key="item.id"></el-option>
-                  <el-option label="FPT Event Club" value="2"></el-option>
-                  <el-option label="FPT Instrument Club" value="3"></el-option>
-                  <el-option label="FPT Chess Club" value="4"></el-option>
-                  <el-option label="FPT Guitar Club" value="5"></el-option>
-                  <el-option label="FPT Vovinam Club" value="6"></el-option>
+                  <el-option
+                    v-for="item in groupList"
+                    :key="item.groupId"
+                    :label="item.groupName"
+                    :value="item.groupId"
+                  ></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="Location" :label-width="formLabelWidth">
@@ -161,6 +161,7 @@ const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
+      groupList: [],
       pagination: [],
       totalPages: 0,
       tableData: [],
@@ -212,6 +213,12 @@ export default {
         }
       })
       .catch(e => console.error(e));
+      new GroupRepository(req)
+      .get()
+      .then(rs => {
+        this.groupList = rs.data.data;
+      })
+      .catch(e => console.error(e));
   },
   mounted: {},
   methods: {
@@ -261,18 +268,26 @@ export default {
       let eventEdit = this.tableData[this.editedIndex].eventId;
       let stateEdit = ""
       let groupNameEdit = ""
-      if(this.form.groupName == "1"){
-        this.groupNameEdit = 1
-      }else if(this.form.groupName == "2"){
-        this.groupNameEdit = 2
-      }else if(this.form.groupName == "3"){
-        this.groupNameEdit = 3
-      }else if(this.form.groupName == "4"){
-        this.groupNameEdit = 4
-      }else if(this.form.groupName == "5"){
-        this.groupNameEdit = 5
-      }else if(this.form.groupName == "6"){
-        this.groupNameEdit = 6
+      if(this.form.groupName === 1){
+        this.groupNameEdit = "F-Code"
+      }else if(this.form.groupName === 2){
+        this.groupNameEdit = "FPT Event Club"
+      }else if(this.form.groupName === 3){
+        this.groupNameEdit = "FPT Instrument Club"
+      }else if(this.form.groupName === 4){
+        this.groupNameEdit = "FPT Chess Club"
+      }else if(this.form.groupName === 5){
+        this.groupNameEdit = "FPT Guitar Club"
+      }else if(this.form.groupName === 6){
+        this.groupNameEdit = "Fpt Vovinam Club"
+      }else if(this.form.groupName === 7){
+        this.groupNameEdit = "Fpt Game Club"
+      }else if(this.form.groupName === 8){
+        this.groupNameEdit = "Fpt Board Game Club"
+      }else if(this.form.groupName === 9){
+        this.groupNameEdit = "Fpt Badminton Club"
+      }else if(this.form.groupName === 10){
+        this.groupNameEdit = "Fpt Football Club"
       }
       axios
         .patch(backendIp+`/api/events/` + eventEdit, {
