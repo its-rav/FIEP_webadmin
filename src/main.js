@@ -36,6 +36,7 @@ import i18n from "./i18n";
 import "./registerServiceWorker";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import locale from 'element-ui/lib/locale/lang/en'
 Vue.use(VueAxios,axios);
 
 import Repository from "./services/repositories/RepositoryFactory";
@@ -45,7 +46,7 @@ Vue.prototype.$repository=Repository;
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
 Vue.use(RouterPrefetch);
-Vue.use(ElementUI);
+Vue.use(ElementUI,{locale});
 firebase.initializeApp(firebaseConfig);
 
 /* eslint-disable no-new */

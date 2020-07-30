@@ -1,6 +1,6 @@
 <template>
   <card>
-    <h5 slot="header" class="title">Edit Profile</h5>
+    <h5 slot="header" class="title">Profile</h5>
     <div class="row">
       <div class="col-md-6 pr-md-1">
         <base-input label="Project"
@@ -37,13 +37,13 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <base-input label="Address"
+        <base-input label="Role"
                   v-model="model.address"
-                  placeholder="Home Address">
+                  placeholder="Role" disabled>
         </base-input>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-4 pr-md-1">
         <base-input label="City"
                   v-model="model.city"
@@ -74,8 +74,8 @@
               </textarea>
         </base-input>
       </div>
-    </div>
-    <base-button slot="footer" type="primary" fill>Save</base-button>
+    </div> -->
+    <!-- <base-button slot="footer" type="primary" fill>Save</base-button> -->
   </card>
 </template>
 <script>

@@ -55,6 +55,11 @@ const routes = [
         name: "postGM",
         component: PostGM
       },
+      {
+        path: "/myprofile",
+        name: "profile",
+        component: Profile
+      },
     ]
   },
   {
