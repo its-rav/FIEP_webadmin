@@ -19,12 +19,12 @@
             placeholder="Please select a Group"
             style="float: left"
           >
-            <el-option label="F-Code" value="1"></el-option>
-            <el-option label="FPT Event Club" value="2"></el-option>
-            <el-option label="FPT Instrument Club" value="3"></el-option>
-            <el-option label="FPT Chess Club" value="4"></el-option>
-            <el-option label="FPT Guitar Club" value="5"></el-option>
-            <el-option label="FPT Vovinam Club" value="6"></el-option>
+            <el-option
+                    v-for="item in groupList"
+                    :key="item.groupId"
+                    :label="item.groupName"
+                    :value="item.groupId"
+                  ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Location" :label-width="formLabelWidth">
@@ -55,22 +55,22 @@
     </el-dialog>
 
     <el-table
-      :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
+      :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
-      <el-table-column label="EventId" :min-width="40">
+      <el-table-column label="EventId" :min-width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.eventId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Event Name" :min-width="120">
+      <el-table-column label="Event Name" :min-width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.eventName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Group Name" :min-width="70">
+      <el-table-column label="Group Name" :min-width="120">
         <template slot-scope="scope">
-          <span>{{ scope.row.groupID}}</span>
+          <span>{{ scope.row.groupName}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Location" width="180px">
@@ -95,7 +95,7 @@
       </el-table-column>-->
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -110,12 +110,12 @@
                   placeholder="Please select a Group"
                   style="float: left"
                 >
-                  <el-option label="F-Code" value="1" v-for="item in items" :key="item.id"></el-option>
-                  <el-option label="FPT Event Club" value="2"></el-option>
-                  <el-option label="FPT Instrument Club" value="3"></el-option>
-                  <el-option label="FPT Chess Club" value="4"></el-option>
-                  <el-option label="FPT Guitar Club" value="5"></el-option>
-                  <el-option label="FPT Vovinam Club" value="6"></el-option>
+                  <el-option
+                    v-for="item in groupList"
+                    :key="item.groupId"
+                    :label="item.groupName"
+                    :value="item.groupId"
+                  ></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="Location" :label-width="formLabelWidth">
@@ -143,7 +143,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px">
+    <el-row style="margin-top: 10px" v-if="searchResult == null">
       <el-col :span="6" :offset="11">
         <el-button v-for="item in pagination"  :key="item.pageId"
                     :label="item.pageId"
@@ -161,6 +161,7 @@ const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
+      groupList: [],
       pagination: [],
       totalPages: 0,
       tableData: [],
@@ -183,7 +184,8 @@ export default {
       formLabelWidth1: "180px",
       search: "",
       editedIndex: -1,
-      eventIdDelete: ""
+      eventIdDelete: "",
+      searchResult: null,
     };
   },
   created: function() {
@@ -201,14 +203,30 @@ export default {
     let NotificationRepository = this.$repository.get("notifications");
     let PostRepository = this.$repository.get("posts");
     let pageSize = 5
-    new EventRepository(req)
-      .get({pageSize})
-      .then(rs => {
+    axios
+        .get(backendIp+`/api/groups/1/events`, {
+        })
+        .then(rs => {
         this.tableData = rs.data.data;
         this.totalPages = rs.data.totalPages;
         for (let i = 0; i < this.totalPages; i++) {
           this.pagination.push({ pageId: i + 1, pageName: "page" });
         }
+      })
+    // new EventRepository(req)
+    //   .get({pageSize})
+    //   .then(rs => {
+    //     this.tableData = rs.data.data;
+    //     this.totalPages = rs.data.totalPages;
+    //     for (let i = 0; i < this.totalPages; i++) {
+    //       this.pagination.push({ pageId: i + 1, pageName: "page" });
+    //     }
+    //   })
+    //   .catch(e => console.error(e));
+      new GroupRepository(req)
+      .get()
+      .then(rs => {
+        this.groupList = rs.data.data;
       })
       .catch(e => console.error(e));
   },
@@ -230,22 +248,7 @@ export default {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.eventName = row.eventName;
-      let groupNm = ""
-      if(row.groupID === 1){
-        this.groupNm = "F-Code"
-      }
-      else if(row.groupID === 2){
-        this.groupNm = "FPT Event Club"
-      }else if(row.groupID === 3){
-        this.groupNm = "FPT Instrument Club"
-      }else if(row.groupID === 4){
-        this.groupNm = "FPT Chess Club"
-      }else if(row.groupID === 5){
-        this.groupNm = "FPT Guitar Club"
-      }else if(row.groupID === 6){
-        this.groupNm = "FPT Vovinam Club"
-      }
-      this.form.groupName = this.groupNm;
+      this.form.groupName = row.groupName;
       this.form.location = row.location;
       this.form.timeOccur = row.timeOccur;
       console.log(this.editedIndex);
@@ -260,18 +263,26 @@ export default {
       let eventEdit = this.tableData[this.editedIndex].eventId;
       let stateEdit = ""
       let groupNameEdit = ""
-      if(this.form.groupName == "1"){
-        this.groupNameEdit = 1
-      }else if(this.form.groupName == "2"){
-        this.groupNameEdit = 2
-      }else if(this.form.groupName == "3"){
-        this.groupNameEdit = 3
-      }else if(this.form.groupName == "4"){
-        this.groupNameEdit = 4
-      }else if(this.form.groupName == "5"){
-        this.groupNameEdit = 5
-      }else if(this.form.groupName == "6"){
-        this.groupNameEdit = 6
+      if(this.form.groupName === 1){
+        this.groupNameEdit = "F-Code"
+      }else if(this.form.groupName === 2){
+        this.groupNameEdit = "FPT Event Club"
+      }else if(this.form.groupName === 3){
+        this.groupNameEdit = "FPT Instrument Club"
+      }else if(this.form.groupName === 4){
+        this.groupNameEdit = "FPT Chess Club"
+      }else if(this.form.groupName === 5){
+        this.groupNameEdit = "FPT Guitar Club"
+      }else if(this.form.groupName === 6){
+        this.groupNameEdit = "Fpt Vovinam Club"
+      }else if(this.form.groupName === 7){
+        this.groupNameEdit = "Fpt Game Club"
+      }else if(this.form.groupName === 8){
+        this.groupNameEdit = "Fpt Board Game Club"
+      }else if(this.form.groupName === 9){
+        this.groupNameEdit = "Fpt Badminton Club"
+      }else if(this.form.groupName === 10){
+        this.groupNameEdit = "Fpt Football Club"
       }
       axios
         .patch(backendIp+`/api/events/` + eventEdit, {
@@ -294,27 +305,15 @@ export default {
         .slice(0, 10)
         .replace(/-/g, "-");
       this.dialogFormVisible = false;
-      let groupNameAdd = ""
-      if(this.addEvent.groupName == "1"){
-        this.groupNameAdd = 1
-      }else if(this.addEvent.groupName == "2"){
-        this.groupNameAdd = 2
-      }else if(this.addEvent.groupName == "3"){
-        this.groupNameAdd = 3
-      }else if(this.addEvent.groupName == "4"){
-        this.groupNameAdd = 4
-      }else if(this.addEvent.groupName == "5"){
-        this.groupNameAdd = 5
-      }else if(this.addEvent.groupName == "6"){
-        this.groupNameAdd = 6
-      }
-      let groupId = this.groupNameAdd;
+      let groupId = this.addEvent.groupName;
       let eventName = this.addEvent.eventName;
       let timeOccur = this.addEvent.timeOccur;
       let eventImageUrl = "";
       let location = this.addEvent.location;
-      let createDate = currentDateWithFormat
-        const req = Request({
+      let eventId = this.tableData.length + 1;
+      let approveState = 0;
+      let createDate = currentDateWithFormat;
+      const req = Request({
         headers: {
           Authentication: "asdasdadshkhhasd"
         }
@@ -327,22 +326,18 @@ export default {
       let GroupRepository = this.$repository.get("groups");
       let NotificationRepository = this.$repository.get("notifications");
       let PostRepository = this.$repository.get("posts");
-        new EventRepository(req)
-        .create({groupId, eventName, timeOccur, eventImageUrl, location})
-        .then(rs => (
-          this.tableData = rs.data.data
-          ))
-      // axios
-      //   .post(`https://192.168.1.24:8083/api/events`, {
-      //     groupId: this.groupId,
-      //     eventName: this.eventName,
-      //     timeOccur: this.timeOccur,
-      //     eventImageUrl: this.eventImageUrl,
-      //     location: this.location
-      //   })
-      //   .then(response => {
-      //     // this.tableData = response.data.data
-      //   });
+      new EventRepository(req)
+        .create({ groupId, eventName, timeOccur, eventImageUrl, location })
+        .then(rs => (this.tableData = rs.data.data));
+      let EventAdd = {
+        eventName: this.addEvent.eventName,
+        groupID: this.addEvent.groupName,
+        location: this.addEvent.location,
+        timeOccur: this.addEvent.timeOccur,
+        createDate: currentDateWithFormat,
+        eventId: this.tableData.length + 1
+      };
+      this.tableData.push(EventAdd),
       this.addEvent.eventName = "";
       this.addEvent.timeOccur = "";
       this.addEvent.groupName = "";
@@ -374,35 +369,17 @@ export default {
         .then(response => {});
       this.tableData.splice(index, 1);
     },
-    async loadBreweries() {
-      const req = Request();
-      let pageSize = 5;
-      let pageNumber = this.currentPage;
-      let EventRepository = this.$repository.get("events");
-      new EventRepository(req)
-        .get({ pageSize, pageNumber })
-        .then(rs => {
-          this.tableData = rs.data.data;
-          console.log(this.tableData);
-        })
-        .catch(e => console.error(e));  
-    },
-    nextPage:function() {
-      this.currentPage++;
-      this.loadBreweries();
-    },
-    prevPage:function() {
-      if(this.currentPage > 1) this.currentPage--;
-      this.loadBreweries();
+    async onSearchInput(e){
+      try {
+        let result=await axios.get(`${backendIp}/api/events?query=${e}`);
+
+      console.log(result);
+        this.searchResult= result.data.data;
+      } catch (error) {
+        this.searchResult = null;
+        console.log(error);
+      }
     }
   },
-  created:function() {
-    this.loadBreweries();
-  },
-  computed:{
-    cantGoBack() {
-      return this.currentPage === 1;
-    }
-  }
 };
 </script>
