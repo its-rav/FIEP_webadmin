@@ -38,13 +38,13 @@ const routes = [
   {
     path: "/dashboardGM",
     component: DashboardGroupManager,
-    redirect: "/dashboardGM",
+    redirect: "/eventGM",
     children: [
-      {
-        path: "/userGM",
-        name: "userGM",
-        component: UserGM
-      },
+      // {
+      //   path: "/userGM",
+      //   name: "userGM",
+      //   component: UserGM
+      // },
       {
         path: "/eventGM",
         name: "eventGM",

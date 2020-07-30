@@ -52,7 +52,11 @@ export default {
   },
   methods: {
     pressed() {
-      alert("press");
+      this.$message({
+            type: "warning",
+            message: "Not yet implemented",
+            showClose: true,
+          });
     },
     googleSignin() {
       let req = Request();
@@ -68,7 +72,7 @@ export default {
           let loginResult = await authRepoInstance.login(token);
           
           let user=loginResult.data.userInfo
-          user.avatarUrl=result.user.photoURL;
+          // user.avatarUrl=result.user.photoURL;
           let returnToken=loginResult.data.token;
 
           localStorage.setItem("userInfo",JSON.stringify(user));
@@ -79,7 +83,7 @@ export default {
               if(user.role==="admin"){
                 this.$router.push({ name: "dashboard" });
               }else if (user.role==="groupmanager"){
-                this.$router.push({ name: "userGM" });
+                this.$router.push({ name: "eventGM" });
               }else{
                 this.$message({
                   type: "warning",
@@ -102,21 +106,25 @@ export default {
         });
     },
     facebookSignin() {
-      const provider = new firebase.auth.FacebookAuthProvider();
-
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(result => {
-          this.$notify({
-            message: "Success"
+      // const provider = new firebase.auth.FacebookAuthProvider();
+      this.$message({
+            type: "warning",
+            message: "Not yet implemented",
+            showClose: true,
           });
-        })
-        .catch(err => {
-          this.$notify({
-            message: "Error"
-          });
-        });
+      // firebase
+      //   .auth()
+      //   .signInWithPopup(provider)
+      //   .then(result => {
+      //     this.$notify({
+      //       message: "Success"
+      //     });
+      //   })
+      //   .catch(err => {
+      //     this.$notify({
+      //       message: "Error"
+      //     });
+      //   });
     }
   }
 };
