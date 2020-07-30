@@ -29,7 +29,7 @@
       </span>
     </el-dialog>
     <el-table
-      :data="tableData.filter(data => !search || data.groupId.toLowerCase().includes(search.toLowerCase()))"
+      :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
       <el-table-column label="GroupId" width="180px">
@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -73,7 +73,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px">
+    <el-row style="margin-top: 10px" v-if="searchResult == null">
       <el-col :span="6" :offset="11">
         <el-button
           v-for="item in pagination"
@@ -97,6 +97,7 @@ const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
+      searchResult: null,
       tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
@@ -225,6 +226,17 @@ export default {
         .then(response => {});
       this.tableData.splice(index, 1);
     },
+    async onSearchInput(e){
+      try {
+        let result=await axios.get(`${backendIp}/api/groups?query=${e}`);
+
+      console.log(result);
+        this.searchResult= result.data.data;
+      } catch (error) {
+        this.searchResult = null;
+        console.log(error);
+      }
+    }
   },
 };
 </script>

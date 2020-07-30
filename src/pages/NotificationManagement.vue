@@ -72,7 +72,7 @@
       </span>
     </el-dialog>
     <el-table
-      :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
+      :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
     <el-table-column label="NotificationID" width="180px">
@@ -150,6 +150,7 @@ const backendIp=baseConfig.backendIp;
 export default {
   data() {
     return {
+      searchResult: null,
       tableData: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
@@ -337,6 +338,16 @@ export default {
       //   .delete(`https://192.168.1.24:8083/api/posts/` + this.postIdDelete)
       //   .then(response => {});
       // this.tableData.splice(index, 1);
+    },
+    async onSearchInput(e){
+      try {
+        let result=await axios.get(`${backendIp}/api/notifications?query=${e}`);
+      console.log(result);
+        this.searchResult= result.data.data;
+      } catch (error) {
+        this.searchResult = null;
+        console.log(error);
+      }
     }
   }
 };

@@ -60,9 +60,8 @@
         <el-button type="primary" @click="confirmAdd()">Confirm</el-button>
       </span>
     </el-dialog>
-
     <el-table
-      :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
+      :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
       <el-table-column label="EventId" :min-width="40">
@@ -77,7 +76,7 @@
       </el-table-column>
       <el-table-column label="Group Name" :min-width="70">
         <template slot-scope="scope">
-          <span>{{ scope.row.groupID}}</span>
+          <span>{{ scope.row.groupName}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Location" width="180px">
@@ -107,7 +106,7 @@
       </el-table-column>-->
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -165,7 +164,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px">
+    <el-row style="margin-top: 10px" v-if="searchResult == null">
       <el-col :span="6" :offset="11">
         <el-button
           v-for="item in pagination"
@@ -190,6 +189,7 @@ export default {
   data() {
     return {
       tableData: [],
+      searchResult: null,
       groupList: [],
       dialogFormVisible: false,
       dialogFormAddVisible: false,
@@ -260,21 +260,7 @@ export default {
       this.dialogFormVisible = true;
       this.editedIndex = this.tableData.indexOf(row);
       this.form.eventName = row.eventName;
-      let groupNm = "";
-      if (row.groupID === 1) {
-        this.groupNm = "F-Code";
-      } else if (row.groupID === 2) {
-        this.groupNm = "FPT Event Club";
-      } else if (row.groupID === 3) {
-        this.groupNm = "FPT Instrument Club";
-      } else if (row.groupID === 4) {
-        this.groupNm = "FPT Chess Club";
-      } else if (row.groupID === 5) {
-        this.groupNm = "FPT Guitar Club";
-      } else if (row.groupID === 6) {
-        this.groupNm = "FPT Vovinam Club";
-      }
-      this.form.groupName = this.groupNm;
+      this.form.groupName = row.groupName;
       this.form.location = row.location;
       this.form.timeOccur = row.timeOccur;
       let approve = "";
@@ -301,31 +287,38 @@ export default {
       } else if (this.form.state === "0") {
         this.stateEdit = 0;
       }
-      if (this.form.groupName == "1") {
-        this.groupNameEdit = 1;
-      } else if (this.form.groupName == "2") {
-        this.groupNameEdit = 2;
-      } else if (this.form.groupName == "3") {
-        this.groupNameEdit = 3;
-      } else if (this.form.groupName == "4") {
-        this.groupNameEdit = 4;
-      } else if (this.form.groupName == "5") {
-        this.groupNameEdit = 5;
-      } else if (this.form.groupName == "6") {
-        this.groupNameEdit = 6;
+      if(this.form.groupName === 1){
+        this.groupNameEdit = "F-Code"
+      }else if(this.form.groupName === 2){
+        this.groupNameEdit = "FPT Event Club"
+      }else if(this.form.groupName === 3){
+        this.groupNameEdit = "FPT Instrument Club"
+      }else if(this.form.groupName === 4){
+        this.groupNameEdit = "FPT Chess Club"
+      }else if(this.form.groupName === 5){
+        this.groupNameEdit = "FPT Guitar Club"
+      }else if(this.form.groupName === 6){
+        this.groupNameEdit = "Fpt Vovinam Club"
+      }else if(this.form.groupName === 7){
+        this.groupNameEdit = "Fpt Game Club"
+      }else if(this.form.groupName === 8){
+        this.groupNameEdit = "Fpt Board Game Club"
+      }else if(this.form.groupName === 9){
+        this.groupNameEdit = "Fpt Badminton Club"
+      }else if(this.form.groupName === 10){
+        this.groupNameEdit = "Fpt Football Club"
       }
-
       axios
         .patch(backendIp + `/api/events/` + eventEdit, {
           eventName: this.form.eventName,
           timeOccur: this.form.timeOccur,
-          groupId: this.groupNameEdit,
+          groupId: this.form.groupName,
           approvalState: this.stateEdit,
           location: this.form.location
         })
         .then(response => {});
       this.tableData[this.editedIndex].eventName = this.form.eventName;
-      this.tableData[this.editedIndex].groupID = this.groupNameEdit;
+      this.tableData[this.editedIndex].groupName = this.groupNameEdit;
       this.tableData[this.editedIndex].location = this.form.location;
       this.tableData[this.editedIndex].timeOccur = this.form.timeOccur;
       this.tableData[this.editedIndex].approveState = this.stateEdit;
@@ -433,6 +426,17 @@ export default {
         .delete(backendIp + `/api/events/` + this.eventIdDelete)
         .then(response => {});
       this.tableData.splice(index, 1);
+    },
+    async onSearchInput(e){
+      try {
+        let result=await axios.get(`${backendIp}/api/events?query=${e}`);
+
+      console.log(result);
+        this.searchResult= result.data.data;
+      } catch (error) {
+        this.searchResult = null;
+        console.log(error);
+      }
     }
   }
 };

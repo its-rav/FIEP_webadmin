@@ -55,7 +55,7 @@
     </el-dialog>
 
     <el-table
-      :data="tableData.filter(data => !search || data.eventName.toLowerCase().includes(search.toLowerCase()))"
+      :data="searchResult?searchResult:tableData"
       style="width: 100%"
     >
       <el-table-column label="EventId" :min-width="40">
@@ -95,7 +95,7 @@
       </el-table-column>-->
       <el-table-column align="right">
         <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
+          <el-input  v-model="search" v-on:change="onSearchInput($event)" size="mini" placeholder="Type to search" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -143,7 +143,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row style="margin-top: 10px">
+    <el-row style="margin-top: 10px" v-if="searchResult == null">
       <el-col :span="6" :offset="11">
         <el-button v-for="item in pagination"  :key="item.pageId"
                     :label="item.pageId"
@@ -183,7 +183,8 @@ export default {
       formLabelWidth1: "180px",
       search: "",
       editedIndex: -1,
-      eventIdDelete: ""
+      eventIdDelete: "",
+      searchResult: null,
     };
   },
   created: function() {
@@ -374,35 +375,17 @@ export default {
         .then(response => {});
       this.tableData.splice(index, 1);
     },
-    async loadBreweries() {
-      const req = Request();
-      let pageSize = 5;
-      let pageNumber = this.currentPage;
-      let EventRepository = this.$repository.get("events");
-      new EventRepository(req)
-        .get({ pageSize, pageNumber })
-        .then(rs => {
-          this.tableData = rs.data.data;
-          console.log(this.tableData);
-        })
-        .catch(e => console.error(e));  
-    },
-    nextPage:function() {
-      this.currentPage++;
-      this.loadBreweries();
-    },
-    prevPage:function() {
-      if(this.currentPage > 1) this.currentPage--;
-      this.loadBreweries();
+    async onSearchInput(e){
+      try {
+        let result=await axios.get(`${backendIp}/api/events?query=${e}`);
+
+      console.log(result);
+        this.searchResult= result.data.data;
+      } catch (error) {
+        this.searchResult = null;
+        console.log(error);
+      }
     }
   },
-  created:function() {
-    this.loadBreweries();
-  },
-  computed:{
-    cantGoBack() {
-      return this.currentPage === 1;
-    }
-  }
 };
 </script>

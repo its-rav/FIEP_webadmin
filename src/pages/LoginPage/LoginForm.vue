@@ -70,7 +70,14 @@ export default {
           this.tokenBack = response.data
           this.$store.commit("setIdToken", this.tokenBack);
           console.log("Token Back", this.tokenBack)
-          console.log("DAta", this.response.data)
+          // if(this.tokenBack.userInfo.role === "user"){
+          //   this.$message({
+          //     type: "info",
+          //     message: "You do not have permission to log in"
+          //   });
+          // }else if(this.tokenBack.userInfo.role === "admin"){
+          //   this.$router.replace({ name: "dashboard" });
+          // }else if(this.tokenBack.userInfo.role === "groupmanager")
         });
           let dataUser = [];
           dataUser = result.additionalUserInfo.profile.given_name;
